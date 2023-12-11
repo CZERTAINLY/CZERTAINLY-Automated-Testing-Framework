@@ -81,7 +81,7 @@ jobs:
           echo "Installing CZERTAINLY version $CZERTAINLY_VERSION"
           echo "Installing CZERTAINLY version ${{ fromJson(inputs.configuration).czertainly.version }}"
           kubectl create namespace czertainly
-          helm install --namespace czertainly -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/values.yaml czertainly-tlm oci://harbor.3key.company/czertainly-helm/czertainly --version $CZERTAINLY_VERSION --timeout 600s
+          helm install --namespace czertainly -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/czertainly-values.yaml czertainly-tlm oci://harbor.3key.company/czertainly-helm/czertainly --version $CZERTAINLY_VERSION --timeout 600s
 
       - name: Installing Helm repositories
         run: |
@@ -93,7 +93,7 @@ jobs:
 
       - name: Create Testkube CRDs
         run: |
-          kubectl apply -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/test-crds/
+          kubectl apply -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/tests/
 
       # Running test
       #- name: Run tests
