@@ -1,0 +1,34 @@
+apiVersion: tests.testkube.io/v3
+kind: Test
+metadata:
+  name: frontend-login-test
+  namespace: testkube
+  labels:
+    executor: cypress-executor
+    test-type: cypress-project
+spec:
+  type: cypress/project
+  content:
+    type: git
+    repository:
+      type: git
+      uri: https://github.com/3KeyCompany/CZERTAINLY-FE-Administrator.git
+      branch: develop
+  executionRequest:
+    variables:
+      ADMIN_PASSWORD:
+        name: ADMIN_PASSWORD
+        type: secret
+        value: "your-strong-password"
+      ADMIN_URL:
+        name: ADMIN_URL
+        value: "https://develop.czertainly.online/administrator/"
+        type: basic
+      ADMIN_USERNAME:
+        name: ADMIN_USERNAME
+        value: "czertainly-admin"
+        type: basic
+    args:
+      - "--browser"
+      - "chrome"
+    executePostRunScriptBeforeScraping: false

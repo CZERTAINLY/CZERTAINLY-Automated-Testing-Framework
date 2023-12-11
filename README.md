@@ -46,5 +46,5 @@ The tests are defined in the `tests` folder under the unique test folder. It con
 CRDs should be prepared using Testkube tools and documentation and then added to the `tests` folder.
 
 Tests are organized as follows:
-- `tests` folder - contains test CRDs
+- `test` folder - contains test CRDs
 - `test-suite` folder - contains the test-suite CRDs
