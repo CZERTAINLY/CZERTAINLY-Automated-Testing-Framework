@@ -7,6 +7,7 @@ on:
 
 jobs:
   prune:
+    name: Prune old workflow runs
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
