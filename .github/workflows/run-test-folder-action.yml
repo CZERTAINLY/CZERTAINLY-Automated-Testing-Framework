@@ -76,7 +76,7 @@ jobs:
 
       - name: Install CZERTAINLY
         env:
-          CZERTAINLY_VERSION: ${{ fromJson(inputs.configuration.czertainly.version) }}
+          CZERTAINLY_VERSION: ${{ fromJson(inputs.configuration).czertainly.version }}
         run: |
           echo "Installing CZERTAINLY version $CZERTAINLY_VERSION"
           echo "Installing CZERTAINLY version ${{ fromJson(inputs.configuration).czertainly.version }}"
