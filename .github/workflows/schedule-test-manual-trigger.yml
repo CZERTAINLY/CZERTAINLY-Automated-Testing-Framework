@@ -52,6 +52,6 @@ jobs:
               workflow_id: 'run-test-folder-action.yml',
               ref: 'main',
               inputs: {
-                'configuration': '{"k8s-cluster":{"dist":"microk8s"},"postgresql":{"version":15},"czertainly":{"version":"2.10.0"},"test-folder":"sample-test"}',
+                'configuration': "${{ env.configuration }}",
               }
             })
