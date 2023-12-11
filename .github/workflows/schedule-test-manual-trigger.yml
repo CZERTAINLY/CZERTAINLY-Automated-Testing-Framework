@@ -39,7 +39,7 @@ jobs:
         env:
           configuration: ${{ env.configuration }}
         with:
-          github-token: ${{ secrets.GITHUB_ATF_PAT }}
+          github-token: ${{ secrets.ATF_PAT }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: 'CZERTAINLY',
