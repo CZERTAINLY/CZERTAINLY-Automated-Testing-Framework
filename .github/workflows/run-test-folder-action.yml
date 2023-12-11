@@ -58,7 +58,7 @@ jobs:
           PGPASSWORD: ${{ fromJson(inputs.configuration).postgresql.password }}
         run: |
           psql -h localhost -U ${{ fromJson(inputs.configuration).postgresql.user }} \
-            -d ${{ fromJson(inputs.configuration).postgresql.db }} -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb/init-czertainly.sql
+            -d ${{ fromJson(inputs.configuration).postgresql.db }} -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb/init-czertainlydb.sql
 
       - name: Create k8s cluster
         if : ${{ fromJson(inputs.configuration).k8s-cluster.dist }} == 'microk8s'
