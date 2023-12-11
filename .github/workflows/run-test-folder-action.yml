@@ -46,15 +46,14 @@ jobs:
           OVERRIDE_HOSTNAME: czertainly.helm
 
     steps:
-      - name: Print variables
+      - name: Print inputs
         run: |
-          echo "${{ inputs.configuration }}"
+          echo "${{ inputs.configuration }}" | jq .
 
       # Checks-out only the content of the test folder
       - uses: actions/checkout@v4
         with:
           sparse-checkout: ${{ fromJson(inputs.configuration).test-folder }}
-          sparse-checkout-cone-mode: false
 
       - name: Create k8s cluster
         if : ${{ fromJson(inputs.configuration).k8s-cluster.dist }} == 'microk8s'
