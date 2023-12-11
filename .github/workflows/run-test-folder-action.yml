@@ -1,7 +1,7 @@
 name: Run tests defined in a folder
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       configuration:
         type: string
