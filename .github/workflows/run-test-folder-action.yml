@@ -57,7 +57,7 @@ jobs:
         env:
           PGPASSWORD: ${{ fromJson(inputs.configuration).postgresql.password }}
         run: |
-          psql -h postgres -U ${{ fromJson(inputs.configuration).postgresql.user }} \
+          psql -h localhost -U ${{ fromJson(inputs.configuration).postgresql.user }} \
             -d ${{ fromJson(inputs.configuration).postgresql.db }} -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb/init-czertainly.sql
 
       - name: Create k8s cluster
