@@ -34,8 +34,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        volumes:
-          - ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb:/docker-entrypoint-initdb.d
 
       mail:
         image: mailserver/docker-mailserver:12.1.0
@@ -50,17 +48,17 @@ jobs:
         run: |
           echo '${{ inputs.configuration }}' | jq .
 
+      # Checks-out only the content of the test folder
+      - uses: actions/checkout@v4
+        with:
+          path: ${{ fromJson(inputs.configuration).test-folder }}
+
       - name: Initialize database
         env:
           PGPASSWORD: ${{ fromJson(inputs.configuration).postgresql.password }}
         run: |
           psql -h postgres -U ${{ fromJson(inputs.configuration).postgresql.user }} \
             -d ${{ fromJson(inputs.configuration).postgresql.db }} -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb/init-czertainly.sql
-
-      # Checks-out only the content of the test folder
-      - uses: actions/checkout@v4
-        with:
-          path: ${{ fromJson(inputs.configuration).test-folder }}
 
       - name: Create k8s cluster
         if : ${{ fromJson(inputs.configuration).k8s-cluster.dist }} == 'microk8s'
