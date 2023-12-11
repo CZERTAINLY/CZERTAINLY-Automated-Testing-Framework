@@ -23,9 +23,9 @@ jobs:
         image: postgres:${{ fromJson(inputs.configuration).postgresql.version }}
         # Provide the password for postgres
         env:
-          POSTGRES_USER: czertainlyuser
-          POSTGRES_PASSWORD: your-strong-password
-          POSTGRES_DB: czertainlydb
+          POSTGRES_USER: ${{ fromJson(inputs.configuration).postgresql.user }}
+          POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).postgresql.password }}
+          POSTGRES_DB: ${{ fromJson(inputs.configuration).postgresql.db }}
         ports:
           - ${{ fromJson(inputs.configuration).postgresql.port }}:5432
         # Set health checks to wait until postgres has started
