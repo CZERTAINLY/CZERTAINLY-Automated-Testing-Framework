@@ -52,6 +52,6 @@ jobs:
               workflow_id: 'run-test-folder-action.yml',
               ref: 'main',
               inputs: {
-                'configuration': "${{ env.configuration }}",
+                'configuration': '"${{ env.configuration }}"',
               }
             })
