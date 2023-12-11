@@ -1,0 +1,52 @@
+name: Schedule test manual trigger
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  trigget-tests:
+    name: Trigger tests for each test folder in matrix strategy
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        test-folder:
+          - 'sample-test'
+
+    steps:
+      # Checks-out only the content of the test folder
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: ${{ matrix.test-folder }}
+          sparse-checkout-cone-mode: false
+
+      - name: Load testing variables for ${{ matrix.test-folder }}
+        id: load_variables
+        run: |
+          variables_file="${{ github.workspace }}/${{ matrix.test-folder }}/variables.json"
+          echo "$(jq '. += {"test-folder":"${{ matrix.test-folder }}"}' $variables_file)" > $variables_file
+          echo "Loading JSON variables:"
+          json=$(cat $variables_file)
+          echo "$json"
+          
+          echo "configuration<<EOF" >> $GITHUB_ENV
+          echo "$json" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Trigger test workflow for ${{ matrix.test-folder }}
+        uses: actions/github-script@v7
+        env:
+          configuration: ${{ env.configuration }}
+        with:
+          github-token: ${{ secrets.GITHUB_ATF_PAT }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: 'CZERTAINLY',
+              repo: 'CZERTAINLY-Automated-Testing-Framework',
+              workflow_id: 'run-test-folder-action.yml',
+              ref: 'main',
+              inputs: {
+                'configuration': '$configuration',
+              }
+            })
