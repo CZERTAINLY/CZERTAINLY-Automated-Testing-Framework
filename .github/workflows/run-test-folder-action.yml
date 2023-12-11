@@ -57,6 +57,8 @@ jobs:
         env:
           PGPASSWORD: ${{ fromJson(inputs.configuration).postgresql.password }}
         run: |
+          ls -la 
+          ls -la ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb
           psql -h localhost -U ${{ fromJson(inputs.configuration).postgresql.user }} \
             -d ${{ fromJson(inputs.configuration).postgresql.db }} -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb/init-czertainlydb.sql
 
