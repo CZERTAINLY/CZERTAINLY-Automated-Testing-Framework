@@ -3,7 +3,11 @@
     "dist": "microk8s"
   },
   "postgresql": {
-    "version": 15
+    "version": 15,
+    "user": "czertainlyuser",
+    "password": "your-strong-password",
+    "db": "czertainlydb",
+    "port": 5432
   },
   "czertainly": {
     "version": "2.10.0"
