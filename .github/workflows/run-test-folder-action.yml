@@ -8,7 +8,7 @@ on:
         description: 'Configuration for the test run'
         required: true
 
-run-name: Run test action - ${{ fromJson(inputs.configuration).test-folder }}
+run-name: Run test action
 
 jobs:
 
