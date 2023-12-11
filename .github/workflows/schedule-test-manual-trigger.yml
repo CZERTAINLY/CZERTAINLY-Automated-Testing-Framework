@@ -29,7 +29,7 @@ jobs:
           echo "Loading JSON variables:"
           json=$(cat $variables_file)
           echo "$json"
-          $json=$(jq -c . $variables_file)
+          json=$(jq -c . $variables_file)
           # change it to one line
           echo "$json"
           
