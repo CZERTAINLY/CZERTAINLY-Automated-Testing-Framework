@@ -35,7 +35,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         volumes:
-          - ${{ github.workspace }}/initdb:/docker-entrypoint-initdb.d
+          - ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb:/docker-entrypoint-initdb.d
 
       mail:
         image: mailserver/docker-mailserver:12.1.0
@@ -52,8 +52,6 @@ jobs:
 
       # Checks-out only the content of the test folder
       - uses: actions/checkout@v4
-        with:
-          sparse-checkout: ${{ fromJson(inputs.configuration).test-folder }}
 
       - name: Create k8s cluster
         if : ${{ fromJson(inputs.configuration).k8s-cluster.dist }} == 'microk8s'
