@@ -29,20 +29,18 @@ jobs:
           echo "Loading JSON variables:"
           json=$(cat $variables_file)
           echo "$json"
-          json=$(jq -c . $variables_file)
+          # json=$(jq -c . $variables_file)
           # change it to one line
-          echo "$json"
+          # echo "$json"
           
-          echo "configuration=$json" >> $GITHUB_ENV
+          # echo "configuration=$json" >> $GITHUB_ENV
           
-          # echo "configuration<<EOF" >> $GITHUB_ENV
-          # echo "$json" >> $GITHUB_ENV
-          # echo "EOF" >> $GITHUB_ENV
+          echo "configuration<<EOF" >> $GITHUB_ENV
+          echo "$json" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Trigger test workflow for ${{ matrix.test-folder }}
         uses: actions/github-script@v7
-        env:
-          configuration: ${{ env.configuration }}
         with:
           github-token: ${{ secrets.ATF_PAT }}
           script: |
