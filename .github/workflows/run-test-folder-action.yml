@@ -79,6 +79,7 @@ jobs:
           CZERTAINLY_VERSION: ${{ fromJson(inputs.configuration).czertainly.version }}
         run: |
           echo "Installing CZERTAINLY version $CZERTAINLY_VERSION"
+          echo "Installing CZERTAINLY version ${{ fromJson(inputs.configuration).czertainly.version }}"
           kubectl create namespace czertainly
           helm install --namespace czertainly -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/values.yaml czertainly-tlm oci://harbor.3key.company/czertainly-helm/czertainly --version $CZERTAINLY_VERSION --timeout 600s
 
