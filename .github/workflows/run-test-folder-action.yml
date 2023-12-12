@@ -23,11 +23,11 @@ jobs:
         image: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
         # Provide the password for postgres
         env:
-          POSTGRES_USER: ${{ fromJson(inputs.configuration).postgresql.user }}
-          POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).postgresql.password }}
-          POSTGRES_DB: ${{ fromJson(inputs.configuration).postgresql.db }}
+          POSTGRES_USER: ${{ fromJson(inputs.configuration).services.postgresql.user }}
+          POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
+          POSTGRES_DB: ${{ fromJson(inputs.configuration).services.postgresql.db }}
         ports:
-          - ${{ fromJson(inputs.configuration).postgresql.port }}:5432
+          - ${{ fromJson(inputs.configuration).services.postgresql.port }}:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -36,7 +36,7 @@ jobs:
           --health-retries 5
 
       mail:
-        image: ${{ ( fromJson(inputs.configuration).services.mail.enabled == 'true' ) && format('mailserver/docker-mailserver:{0}', fromJson(inputs.configuration).services.mail.version) || '' }}
+        image: ${{ ( fromJson(inputs.configuration).services.mail.enabled ) && format('mailserver/docker-mailserver:{0}', fromJson(inputs.configuration).services.mail.version) || '' }}
         ports:
           - 25:25
         env:
@@ -53,12 +53,12 @@ jobs:
 
       - name: Initialize database
         env:
-          PGPASSWORD: ${{ fromJson(inputs.configuration).postgresql.password }}
+          PGPASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
         run: |
           ls -la 
           ls -la ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb
-          psql -h localhost -U ${{ fromJson(inputs.configuration).postgresql.user }} \
-            -d ${{ fromJson(inputs.configuration).postgresql.db }} -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb/init-czertainlydb.sql
+          psql -h localhost -U ${{ fromJson(inputs.configuration).services.postgresql.user }} \
+            -d ${{ fromJson(inputs.configuration).services.postgresql.db }} -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb/init-czertainlydb.sql
 
       - name: Create k8s cluster
         if : ${{ fromJson(inputs.configuration).k8s-cluster.dist }} == 'microk8s'
