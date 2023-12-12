@@ -11,6 +11,8 @@ runs:
   using: "composite"
 
   steps:
+    - uses: actions/checkout@v4
+      
     - name: Create microk8s cluster
       if: ${{ inputs.dist }} == 'microk8s'
       uses: ./.github/actions/create-microk8s-cluster
