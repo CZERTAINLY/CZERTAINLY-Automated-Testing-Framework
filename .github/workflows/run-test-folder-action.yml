@@ -32,8 +32,9 @@ jobs:
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        # The `env` context does not work here, so we need to use expression
         ports:
-          - ${{ env.POSTGRES_PORT }}:5432
+          - ${{ fromJson(inputs.configuration).services.postgres.port }}:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -43,7 +44,9 @@ jobs:
 
       mail:
         # Workaround for conditional startup of the service described here: https://github.com/actions/runner/issues/822
+        # The `env` context does not work here, so we need to use expression
         image: ${{ ( fromJson(inputs.configuration).services.mail.enabled ) && format('mailserver/docker-mailserver:{0}', fromJson(inputs.configuration).services.mail.version) || '' }}
+        # The `env` context does not work here, so we need to use expression
         ports:
           - ${{ fromJson(inputs.configuration).services.mail.port }}:25
         env:
