@@ -91,7 +91,12 @@ jobs:
         env:
           PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}
         run: |
-          ls -la $TEST_FOLDER_PATH/initdb
+          search_dir=/the/path/to/base/dir
+          for entry in "$TEST_FOLDER_PATH/initdb"/*
+          do
+            psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f $TEST_FOLDER_PATH/initdb/init-czertainlydb.sql
+            echo "$entry"
+          done
           psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f $TEST_FOLDER_PATH/initdb/init-czertainlydb.sql
 
       # Create k8s cluster based on the distribution specified in the configuration
@@ -110,7 +115,7 @@ jobs:
         run: |
           echo "Installing CZERTAINLY version $CZERTAINLY_VERSION"
           kubectl create namespace czertainly
-          helm install --namespace czertainly -f TEST_FOLDER_PATH/czertainly-values.yaml czertainly-tlm \
+          helm install --namespace czertainly -f $TEST_FOLDER_PATH/czertainly-values.yaml czertainly-tlm \
             oci://harbor.3key.company/czertainly-helm/czertainly --version $CZERTAINLY_VERSION --timeout 600s
 
       - name: Installing Helm repositories
