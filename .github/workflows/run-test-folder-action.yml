@@ -20,7 +20,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: ${{ ( fromJson(inputs.configuration).postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).postgresql.version) || '' }}
+        image: ${{ ( fromJson(inputs.configuration).postgresql.enabled == true ) && format('postgres:{0}', fromJson(inputs.configuration).postgresql.version) || '' }}
         # Provide the password for postgres
         env:
           POSTGRES_USER: ${{ fromJson(inputs.configuration).postgresql.user }}
@@ -36,7 +36,7 @@ jobs:
           --health-retries 5
 
       mail:
-        image: ${{ ( fromJson(inputs.configuration).mail.enabled ) && format('mailserver/docker-mailserver:{0}', fromJson(inputs.configuration).mail.version) || '' }}
+        image: ${{ ( fromJson(inputs.configuration).mail.enabled == true ) && format('mailserver/docker-mailserver:{0}', fromJson(inputs.configuration).mail.version) || '' }}
         ports:
           - 25:25
         env:
