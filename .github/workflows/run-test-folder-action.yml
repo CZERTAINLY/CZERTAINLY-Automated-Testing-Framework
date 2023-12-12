@@ -10,6 +10,9 @@ on:
 
 run-name: Run test action - ${{ fromJson(inputs.configuration).test-folder }}
 
+env:
+  POSTGRES_IMAGE: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
+
 jobs:
 
   test:
@@ -17,11 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      # Label used to access the service container
       postgres:
-        # Docker Hub image
-        image: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
-        # Provide the password for postgres
+        # Workaround for conditional startup of the service described here: https://github.com/actions/runner/issues/822
+        image: ${{ env.POSTGRES_IMAGE }}
         env:
           POSTGRES_USER: ${{ fromJson(inputs.configuration).services.postgresql.user }}
           POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
@@ -36,9 +37,10 @@ jobs:
           --health-retries 5
 
       mail:
+        # Workaround for conditional startup of the service described here: https://github.com/actions/runner/issues/822
         image: ${{ ( fromJson(inputs.configuration).services.mail.enabled ) && format('mailserver/docker-mailserver:{0}', fromJson(inputs.configuration).services.mail.version) || '' }}
         ports:
-          - 25:25
+          - ${{ fromJson(inputs.configuration).services.mail.port }}:25
         env:
           SMTP_ONLY: 1
           OVERRIDE_HOSTNAME: czertainly.helm
