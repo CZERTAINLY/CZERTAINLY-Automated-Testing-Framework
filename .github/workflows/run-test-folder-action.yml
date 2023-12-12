@@ -12,6 +12,9 @@ run-name: Run test action - ${{ fromJson(inputs.configuration).test-folder }}
 
 env:
   POSTGRES_IMAGE: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
+  POSTGRES_USER: ${{ fromJson(inputs.configuration).services.postgresql.user }}
+  POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
+  POSTGRES_DB: ${{ fromJson(inputs.configuration).services.postgresql.db }}
 
 jobs:
 
@@ -25,7 +28,7 @@ jobs:
         # The `env` context does not work here, so we need to use expression
         image: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
         env:
-          POSTGRES_USER: ${{ fromJson(inputs.configuration).services.postgresql.user }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
           POSTGRES_DB: ${{ fromJson(inputs.configuration).services.postgresql.db }}
         ports:
