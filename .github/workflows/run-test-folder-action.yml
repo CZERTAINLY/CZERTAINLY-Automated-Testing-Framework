@@ -20,7 +20,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled == 'true' ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
+        image: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
         # Provide the password for postgres
         env:
           POSTGRES_USER: ${{ fromJson(inputs.configuration).postgresql.user }}
