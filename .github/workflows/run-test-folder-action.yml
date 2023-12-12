@@ -15,6 +15,7 @@ env:
   POSTGRES_USER: ${{ fromJson(inputs.configuration).services.postgresql.user }}
   POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
   POSTGRES_DB: ${{ fromJson(inputs.configuration).services.postgresql.db }}
+  POSTGRES_PORT: ${{ fromJson(inputs.configuration).services.postgresql.port }}
 
 jobs:
 
@@ -29,10 +30,10 @@ jobs:
         image: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
         env:
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
-          POSTGRES_DB: ${{ fromJson(inputs.configuration).services.postgresql.db }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
         ports:
-          - ${{ fromJson(inputs.configuration).services.postgresql.port }}:5432
+          - ${{ env.POSTGRES_PORT }}:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
