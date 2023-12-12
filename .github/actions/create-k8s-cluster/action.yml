@@ -13,4 +13,4 @@ runs:
   steps:
     - name: Create microk8s cluster
       if: ${{ inputs.dist }} == 'microk8s'
-      uses: ./.github/actions/create-microk8s-cluster/action.yml
+      uses: ./.github/actions/create-microk8s-cluster
