@@ -27,7 +27,13 @@ jobs:
       postgres:
         # Workaround for conditional startup of the service described here: https://github.com/actions/runner/issues/822
         # The `env` context does not work here, so we need to use expression
-        image: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
+        image: >-
+          ${{
+            (
+              fromJson(inputs.configuration).services.postgresql.enabled ) &&
+              format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version
+            ) || ''
+          }}
         env:
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
