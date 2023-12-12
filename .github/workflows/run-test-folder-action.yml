@@ -11,7 +11,7 @@ on:
 run-name: Run test action - ${{ fromJson(inputs.configuration).test-folder }}
 
 env:
-  POSTGRES_IMAGE: postgres:15
+  POSTGRES_IMAGE: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
 
 jobs:
 
@@ -22,7 +22,8 @@ jobs:
     services:
       postgres:
         # Workaround for conditional startup of the service described here: https://github.com/actions/runner/issues/822
-        image: $POSTGRES_IMAGE
+        # The `env` context does not work here, so we need to use expression
+        image: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
         env:
           POSTGRES_USER: ${{ fromJson(inputs.configuration).services.postgresql.user }}
           POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
@@ -48,6 +49,7 @@ jobs:
     steps:
       - name: Print inputs
         run: |
+          echo "Postgres image: $POSTGRES_IMAGE"
           echo '${{ inputs.configuration }}' | jq .
 
       # Checks-out only the content of the test folder
