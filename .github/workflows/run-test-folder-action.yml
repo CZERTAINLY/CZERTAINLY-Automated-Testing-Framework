@@ -10,6 +10,8 @@ on:
 
 run-name: Run test action - ${{ fromJson(inputs.configuration).test-folder }}
 
+# Define environment variables that are used across the workflow
+# It is easier to change it here than in every job
 env:
   POSTGRES_IMAGE: >-
     ${{
@@ -22,6 +24,8 @@ env:
   POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
   POSTGRES_DB: ${{ fromJson(inputs.configuration).services.postgresql.db }}
   POSTGRES_PORT: ${{ fromJson(inputs.configuration).services.postgresql.port }}
+  TEST_FOLDER_NAME: ${{ fromJson(inputs.configuration).test-folder }}
+  TEST_FOLDER_PATH: ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}
 
 jobs:
 
@@ -72,22 +76,21 @@ jobs:
           OVERRIDE_HOSTNAME: czertainly.helm
 
     steps:
+      # Print the value of the input `configuration` to the log
       - name: Print inputs
         run: |
-          echo "Postgres image: $POSTGRES_IMAGE"
           echo '${{ inputs.configuration }}' | jq .
 
-      # Checks-out only the content of the test folder
+      # Check out the repository
       - uses: actions/checkout@v4
 
+      # Initialize database with the data from the initdb folder
       - name: Initialize database
         env:
-          PGPASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
+          PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}
         run: |
-          ls -la 
-          ls -la ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb
-          psql -h localhost -U ${{ fromJson(inputs.configuration).services.postgresql.user }} \
-            -d ${{ fromJson(inputs.configuration).services.postgresql.db }} -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/initdb/init-czertainlydb.sql
+          ls -la $TEST_FOLDER_PATH/initdb
+          psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f $TEST_FOLDER_PATH/initdb/init-czertainlydb.sql
 
       - name: Create k8s cluster
         if : ${{ fromJson(inputs.configuration).k8s-cluster.dist }} == 'microk8s'
