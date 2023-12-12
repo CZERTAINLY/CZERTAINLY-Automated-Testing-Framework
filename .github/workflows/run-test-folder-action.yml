@@ -91,13 +91,10 @@ jobs:
         env:
           PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}
         run: |
-          search_dir=/the/path/to/base/dir
           for entry in "$TEST_FOLDER_PATH/initdb"/*
           do
-            psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f $TEST_FOLDER_PATH/initdb/init-czertainlydb.sql
-            echo "$entry"
+            psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f $entry
           done
-          psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f $TEST_FOLDER_PATH/initdb/init-czertainlydb.sql
 
       # Create k8s cluster based on the distribution specified in the configuration
       - name: Create k8s cluster - ${{ env.K8S_CLUSTER_DIST }}
