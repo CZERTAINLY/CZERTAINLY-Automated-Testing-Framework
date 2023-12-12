@@ -108,41 +108,18 @@ jobs:
         with:
           version: v3.11.1
 
-      - name: Install CZERTAINLY
+      # Install CZERTAINLY from Helm chart
+      - name: Install CZERTAINLY version ${{ env.CZERTAINLY_VERSION }}
         run: |
           echo "Installing CZERTAINLY version $CZERTAINLY_VERSION"
           kubectl create namespace czertainly
           helm install --namespace czertainly -f $TEST_FOLDER_PATH/czertainly-values.yaml czertainly-tlm \
             oci://harbor.3key.company/czertainly-helm/czertainly --version $CZERTAINLY_VERSION --timeout 600s
 
-      - name: Installing Helm repositories
-        run: |
-          helm repo add kubeshop https://kubeshop.github.io/helm-charts
+      # Deploy Testkube environment
+      - name: Deploy Testkube
+        uses: ./.github/actions/deploy-testkube
 
-      - name: Deploy Testkube using Helm
-        run: |-
-          helm upgrade --install --atomic --timeout 600s testkube kubeshop/testkube --namespace testkube --create-namespace
-
-      - name: Create Testkube CRDs
-        run: |
-          kubectl apply -f ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}/tests --recursive
-
-      # Running test
-      #- name: Run tests
-      #  id: run_test
-      #  uses: kubeshop/testkube-docker-action@v1
-      #  env:
-      #    KUBECONFIG: ${{ github.workspace }}/.kube/config
-      #  with:
-      #    command: run
-      #    resource: test
-      #    parameters: curl -f
-
-      - name: Setup Testkube
-        uses: kubeshop/setup-testkube@v1
-        with:
-          namespace: testkube
-
-      - name: Run test
-        run: |
-          testkube run test czertainly-auth-test -f
+      # Create Testkube CRDs and run tests
+      - name: Run tests
+        uses: ./.github/actions/run-tests

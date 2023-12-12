@@ -1,0 +1,17 @@
+name: Run tests
+description: Apply Testkube CRDs and run all tests and test-cases
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Create Testkube CRDs
+      shell: bash
+      run: |
+        kubectl apply -f $TEST_FOLDER_PATH/tests --recursive
+
+    - name: Run tests
+      shell: bash
+      run: |
+        testkube run test czertainly-auth-test -f
