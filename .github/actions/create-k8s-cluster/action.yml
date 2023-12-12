@@ -11,11 +11,6 @@ runs:
   using: "composite"
 
   steps:
-    - run: |
-        ls -la
-        ls -la .github
-        ls -la .github/actions
-      shell: bash
 
     - name: Create microk8s cluster
       if: ${{ inputs.dist }} == 'microk8s'
