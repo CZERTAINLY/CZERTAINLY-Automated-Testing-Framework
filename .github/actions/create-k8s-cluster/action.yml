@@ -1,0 +1,16 @@
+name: Create k8s cluster
+description: Install and configure a k8s cluster based on selected distribution
+
+inputs:
+  dist:
+    description: 'Distribution name of k8s cluster'
+    required: true
+    default: 'rke2'
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Create microk8s cluster
+      if: ${{ inputs.dist }} == 'microk8s'
+      uses: ./.github/actions/create-microk8s-cluster/action.yml

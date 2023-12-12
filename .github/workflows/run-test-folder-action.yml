@@ -26,6 +26,7 @@ env:
   POSTGRES_PORT: ${{ fromJson(inputs.configuration).services.postgresql.port }}
   TEST_FOLDER_NAME: ${{ fromJson(inputs.configuration).test-folder }}
   TEST_FOLDER_PATH: ${{ github.workspace }}/${{ fromJson(inputs.configuration).test-folder }}
+  K8S_CLUSTER_DIST: ${{ fromJson(inputs.configuration).k8s-cluster.dist }}
 
 jobs:
 
@@ -92,19 +93,13 @@ jobs:
           ls -la $TEST_FOLDER_PATH/initdb
           psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f $TEST_FOLDER_PATH/initdb/init-czertainlydb.sql
 
+      # Create k8s cluster based on the distribution specified in the configuration
       - name: Create k8s cluster
-        if : ${{ fromJson(inputs.configuration).k8s-cluster.dist }} == 'microk8s'
-        uses: balchua/microk8s-actions@v0.3.0
+        uses: ./.github/actions/create-k8s-cluster/action.yml
         with:
-          channel: '1.26/stable'
-          addons: '["dns", "rbac", "ingress", "hostpath-storage"]'
+          dist: ${{ env.K8S_CLUSTER_DIST }}
 
-      - name: Prepare local kubectl context
-        run: |
-          mkdir -p ${{ github.workspace }}/.kube
-          sudo microk8s config > ${{ github.workspace }}/.kube/config
-          sudo chown -R runner: ${{ github.workspace }}/.kube
-
+      # Set up Helm for the cluster to install Helm charts CZERTAINLY and Testkube
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:

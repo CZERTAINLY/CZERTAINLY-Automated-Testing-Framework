@@ -1,0 +1,19 @@
+name: Create microk8s cluster
+description: Install and configure a microk8s cluster
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Create k8s cluster
+      uses: balchua/microk8s-actions@v0.3.0
+      with:
+        channel: '1.26/stable'
+        addons: '["dns", "rbac", "ingress", "hostpath-storage"]'
+
+    - name: Prepare local kubectl context
+      shell: bash
+      run: |
+        mkdir -p ${{ github.workspace }}/.kube
+        sudo microk8s config > ${{ github.workspace }}/.kube/config
+        sudo chown -R runner: ${{ github.workspace }}/.kube
