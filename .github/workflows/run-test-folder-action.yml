@@ -95,7 +95,7 @@ jobs:
 
       # Create k8s cluster based on the distribution specified in the configuration
       - name: Create k8s cluster
-        uses: ./.github/actions/create-k8s-cluster/action.yml
+        uses: ./.github/actions/create-k8s-cluster
         with:
           dist: ${{ env.K8S_CLUSTER_DIST }}
 
