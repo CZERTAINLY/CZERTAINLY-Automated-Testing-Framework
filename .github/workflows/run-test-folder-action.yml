@@ -22,7 +22,7 @@ jobs:
     services:
       postgres:
         # Workaround for conditional startup of the service described here: https://github.com/actions/runner/issues/822
-        image: ${{ env.POSTGRES_IMAGE }}
+        image: $POSTGRES_IMAGE
         env:
           POSTGRES_USER: ${{ fromJson(inputs.configuration).services.postgresql.user }}
           POSTGRES_PASSWORD: ${{ fromJson(inputs.configuration).services.postgresql.password }}
