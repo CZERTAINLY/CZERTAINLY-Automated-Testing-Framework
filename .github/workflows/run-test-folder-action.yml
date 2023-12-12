@@ -34,7 +34,7 @@ jobs:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
         # The `env` context does not work here, so we need to use expression
         ports:
-          - ${{ fromJson(inputs.configuration).services.postgres.port }}:5432
+          - ${{ fromJson(inputs.configuration).services.postgresql.port }}:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
