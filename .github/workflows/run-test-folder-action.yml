@@ -11,7 +11,7 @@ on:
 run-name: Run test action - ${{ fromJson(inputs.configuration).test-folder }}
 
 env:
-  POSTGRES_IMAGE: ${{ ( fromJson(inputs.configuration).services.postgresql.enabled ) && format('postgres:{0}', fromJson(inputs.configuration).services.postgresql.version) || '' }}
+  POSTGRES_IMAGE: postgres:15
 
 jobs:
 
