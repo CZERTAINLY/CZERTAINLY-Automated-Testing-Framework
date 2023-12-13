@@ -27,3 +27,20 @@ runs:
       shell: bash
       run: |
         testkube get execution
+
+    - name: Run all test-suites
+      shell: bash
+      run: |
+        for test in $(kubectl get testsuite.tests.testkube.io -A --no-headers -o custom-columns=":metadata.name") ; do
+          testkube run testsuite $test
+        done
+
+    - name: Wait for test-suites to finish
+      shell: bash
+      run: |
+        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
+
+    - name: Print test-suite results
+      shell: bash
+      run: |
+        testkube get testsuiteexecution
