@@ -2,30 +2,30 @@ name: Schedule test manual trigger
 
 on:
   workflow_dispatch:
+    inputs:
+        test-folder:
+          type: string
+          description: 'Test folder to run'
+          required: true
 
 jobs:
 
   trigget-tests:
-    name: Trigger tests for each test folder in matrix strategy
+    name: Trigger tests for test folder - ${{ inputs.test-folder }}
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        test-folder:
-          - 'sample-test'
 
     steps:
       # Checks-out only the content of the test folder
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: ${{ matrix.test-folder }}
+          sparse-checkout: ${{ inputs.test-folder }}
           sparse-checkout-cone-mode: false
 
-      - name: Load testing variables for ${{ matrix.test-folder }}
+      - name: Load testing variables for ${{ inputs.test-folder }}
         id: load_variables
         run: |
-          variables_file="${{ github.workspace }}/${{ matrix.test-folder }}/variables.json"
-          echo "$(jq '. += {"test-folder":"${{ matrix.test-folder }}"}' $variables_file)" > $variables_file
+          variables_file="${{ github.workspace }}/${{ inputs.test-folder }}/variables.json"
+          echo "$(jq '. += {"test-folder":"${{ inputs.test-folder }}"}' $variables_file)" > $variables_file
           echo "Loading JSON variables:"
           json=$(cat $variables_file)
           echo "$json"
@@ -39,7 +39,7 @@ jobs:
           # echo "$json" >> $GITHUB_ENV
           # echo "EOF" >> $GITHUB_ENV
 
-      - name: Trigger test workflow for ${{ matrix.test-folder }}
+      - name: Trigger test workflow for ${{ inputs.test-folder }}
         uses: actions/github-script@v7
         env:
           configuration: ${{ env.configuration }}
