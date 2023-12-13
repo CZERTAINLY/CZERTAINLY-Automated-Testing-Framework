@@ -14,7 +14,7 @@ runs:
     - name: Run all tests
       shell: bash
       run: |
-        for test in $(kubectl get tests.tests.testkube.io -A --no-headers -o custom-columns=":metadata.name") ; do
+        for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           testkube run test $test
         done
 
@@ -27,11 +27,18 @@ runs:
       shell: bash
       run: |
         testkube get execution
+        
+        for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          testkube get execution $test
+          if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
+            exit 1
+          fi
+        done
 
     - name: Run all test-suites
       shell: bash
       run: |
-        for test in $(kubectl get testsuite.tests.testkube.io -A --no-headers -o custom-columns=":metadata.name") ; do
+        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           testkube run testsuite $test
         done
 
@@ -44,3 +51,10 @@ runs:
       shell: bash
       run: |
         testkube get testsuiteexecution
+        
+        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          testkube get execution $test
+          if [[ $(kubectl get testsuite.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
+            exit 1
+          fi
+        done
