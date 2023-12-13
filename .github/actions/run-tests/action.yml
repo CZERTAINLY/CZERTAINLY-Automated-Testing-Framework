@@ -11,7 +11,25 @@ runs:
       run: |
         kubectl apply -f $TEST_FOLDER_PATH/tests --recursive
 
-    - name: Run tests
+    - name: Run all tests
       shell: bash
       run: |
-        testkube run test czertainly-auth-test -f
+        test-names=$(kubectl get tests.tests.testkube.io -A --no-headers -o custom-columns=":metadata.name")
+        test-suite-names=$(kubectl get testsuites.tests.testkube.io -A --no-headers -o custom-columns=":metadata.name")
+        
+        for test-name in $test-names ; do
+          testkube run test $test-name
+        done
+
+    - name: Wait for tests to finish
+      shell: bash
+      run: |
+        until [[ $(kubectl get tests.tests.testkube.io -n testkube -o jsonpath='{.items[*].status.latestExecution.status}') == *"running"* ]]; do
+          echo "Waiting for tests to finish..."
+          sleep 5
+        done
+
+    - name: Print test results
+      shell: bash
+      run: |
+        testkube get execution
