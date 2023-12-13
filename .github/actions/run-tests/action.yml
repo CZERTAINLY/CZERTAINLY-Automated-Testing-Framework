@@ -14,20 +14,14 @@ runs:
     - name: Run all tests
       shell: bash
       run: |
-        test-names=$(kubectl get tests.tests.testkube.io -A --no-headers -o custom-columns=":metadata.name")
-        test-suite-names=$(kubectl get testsuites.tests.testkube.io -A --no-headers -o custom-columns=":metadata.name")
-        
-        for test-name in $test-names ; do
-          testkube run test $test-name
+        for test in $(kubectl get tests.tests.testkube.io -A --no-headers -o custom-columns=":metadata.name") ; do
+          testkube run test $test
         done
 
     - name: Wait for tests to finish
       shell: bash
       run: |
-        until [[ $(kubectl get tests.tests.testkube.io -n testkube -o jsonpath='{.items[*].status.latestExecution.status}') == *"running"* ]]; do
-          echo "Waiting for tests to finish..."
-          sleep 5
-        done
+        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
 
     - name: Print test results
       shell: bash
