@@ -15,7 +15,7 @@ runs:
       shell: bash
       run: |
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube run test $test
+          testkube run test $test --name $test
         done
 
     - name: Wait for tests to finish
@@ -39,7 +39,7 @@ runs:
       shell: bash
       run: |
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube run testsuite $test
+          testkube run testsuite $test --name $test
         done
 
     - name: Wait for test-suites to finish
