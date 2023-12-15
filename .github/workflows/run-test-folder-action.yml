@@ -13,6 +13,7 @@ run-name: Run test action - ${{ fromJson(inputs.configuration).test-folder }}
 # Define environment variables that are used across the workflow
 # It is easier to change it here than in every job
 env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   POSTGRES_IMAGE: >-
     ${{
       (
