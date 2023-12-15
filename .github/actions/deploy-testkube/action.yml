@@ -31,6 +31,6 @@ runs:
       uses: kubeshop/setup-testkube@v1
       with:
         namespace: testkube
-        organization: ${{ secrets.TK_ORGANIZATION }}
+        organization: ${{ env.TK_ORGANIZATION }}
         environment: ${{ secrets.TK_ENVIRONMENT }}
         token: ${{ secrets.TK_TOKEN }}

@@ -29,6 +29,7 @@ env:
   K8S_CLUSTER_DIST: ${{ fromJson(inputs.configuration).k8s-cluster.dist }}
   CZERTAINLY_VERSION: ${{ fromJson(inputs.configuration).czertainly.version }}
   TK_SUBSCRIPTION: ${{ fromJson(inputs.configuration).testkube.subscription }}
+  TK_ORGANIZATION: ${{ secrets.TK_ORGANIZATION }}
 
 jobs:
 
