@@ -11,11 +11,24 @@ runs:
       run: |
         kubectl apply -f $TEST_FOLDER_PATH/tests --recursive
 
-    - name: Run all tests
+    - name: Get Job ID from GH API
+      id: get-job-id
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       shell: bash
       run: |
+        jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs)
+        job_id=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .id')
+        echo "job_id=$job_id" >> $GITHUB_ENV
+
+    - name: Run all tests
+      shell: bash
+      env:
+        RUN_ID: ${{ github.run_id }}
+        JOB_ID: ${{ env.job_id }}
+      run: |
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube run test $test --name $test
+          testkube run test $test --name $test-$RUN_ID-$JOB_ID
         done
 
     - name: Wait for tests to finish
