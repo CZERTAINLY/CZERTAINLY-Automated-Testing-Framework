@@ -7,18 +7,30 @@ runs:
   steps:
 
     - name: Installing Testkube Helm repository
+      if: ${{ env.TK_SUBSCRIPTION }} == 'free'
       shell: bash
       run: |
         helm repo add kubeshop https://kubeshop.github.io/helm-charts
 
     - name: Deploy Testkube using Helm
+      if: ${{ env.TK_SUBSCRIPTION }} == 'free'
       shell: bash
       run: |-
         helm upgrade --install --atomic --timeout 600s testkube kubeshop/testkube --namespace testkube --create-namespace
-        
+
         kubectl describe pods -n testkube -l app.kubernetes.io/name=api-server
 
     - name: Setup Testkube CLI
+      if: ${{ env.TK_SUBSCRIPTION }} == 'free'
       uses: kubeshop/setup-testkube@v1
       with:
         namespace: testkube
+
+    - name: Setup Testkube Pro
+      if: ${{ env.TK_SUBSCRIPTION }} == 'pro'
+      uses: kubeshop/setup-testkube@v1
+      with:
+        namespace: testkube
+        organization: ${{ secrets.TK_ORGANIZATION }}
+        environment: ${{ secrets.TK_ENVIRONMENT }}
+        token: ${{ secrets.TK_TOKEN }}

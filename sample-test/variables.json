@@ -19,5 +19,9 @@
   },
   "czertainly": {
     "version": "2.10.0"
+  },
+  "testkube": {
+    "subscription": "pro",
+    "version": "1.16.15"
   }
 }
