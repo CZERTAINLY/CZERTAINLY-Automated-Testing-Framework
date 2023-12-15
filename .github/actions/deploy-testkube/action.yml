@@ -38,6 +38,9 @@ runs:
           --namespace testkube
 
         kubectl describe pods -n testkube -l app.kubernetes.io/name=api-server
+        
+        echo "Waiting for the testkube-api to be ready"
+        kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=api-server
 
     - name: Setup Testkube Pro
       if: env.TK_SUBSCRIPTION == 'pro'

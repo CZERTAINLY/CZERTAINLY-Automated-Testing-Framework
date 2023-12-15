@@ -37,11 +37,13 @@ runs:
 
     - name: Print test results
       shell: bash
+      env:
+        RUN_ID: ${{ github.run_id }}
       run: |
         testkube get execution
         
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get execution $test
+          testkube get execution $test-$RUN_ID-$JOB_ID
           if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
             exit 1
           fi
@@ -49,9 +51,11 @@ runs:
 
     - name: Run all test-suites
       shell: bash
+      env:
+        RUN_ID: ${{ github.run_id }}
       run: |
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube run testsuite $test --name $test
+          testkube run testsuite $test --name $test-$RUN_ID-$JOB_ID
         done
 
     - name: Wait for test-suites to finish
@@ -61,11 +65,13 @@ runs:
 
     - name: Print test-suite results
       shell: bash
+      env:
+        RUN_ID: ${{ github.run_id }}
       run: |
         testkube get testsuiteexecution
         
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get execution $test
+          testkube get execution $test-$RUN_ID-$JOB_ID
           if [[ $(kubectl get testsuite.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
             exit 1
           fi
