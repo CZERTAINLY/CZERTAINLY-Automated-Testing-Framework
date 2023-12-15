@@ -30,6 +30,8 @@ env:
   CZERTAINLY_VERSION: ${{ fromJson(inputs.configuration).czertainly.version }}
   TK_SUBSCRIPTION: ${{ fromJson(inputs.configuration).testkube.subscription }}
   TK_ORGANIZATION: ${{ secrets.TK_ORGANIZATION }}
+  TK_ENVIRONMENT: ${{ secrets.TK_ENVIRONMENT }}
+  TK_TOKEN: ${{ secrets.TK_TOKEN }}
 
 jobs:
 

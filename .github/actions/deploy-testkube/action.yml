@@ -32,5 +32,5 @@ runs:
       with:
         namespace: testkube
         organization: ${{ env.TK_ORGANIZATION }}
-        environment: ${{ secrets.TK_ENVIRONMENT }}
-        token: ${{ secrets.TK_TOKEN }}
+        environment: ${{ env.TK_ENVIRONMENT }}
+        token: ${{ env.TK_TOKEN }}
