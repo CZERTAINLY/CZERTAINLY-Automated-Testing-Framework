@@ -26,6 +26,20 @@ runs:
       with:
         namespace: testkube
 
+    - name: Deploy Testkube using Helm
+      if: ${{ env.TK_SUBSCRIPTION }} == 'pro'
+      shell: bash
+      run: |-
+        helm upgrade --install --reuse-values --create-namespace testkube kubeshop/testkube \
+          --set testkube-api.cloud.key=$TK_AGENT \
+          --set testkube-api.cloud.orgId=$TK_ORGANIZATION \
+          --set testkube-api.cloud.envId=$TK_ENVIRONMENT \
+          --set testkube-api.minio.enabled=false --set mongodb.enabled=false \
+          --set testkube-dashboard.enabled=false --set testkube-api.cloud.url=agent.testkube.io:443 \
+          --namespace testkube
+
+        kubectl describe pods -n testkube -l app.kubernetes.io/name=api-server
+
     - name: Setup Testkube Pro
       if: ${{ env.TK_SUBSCRIPTION }} == 'pro'
       uses: kubeshop/setup-testkube@v1

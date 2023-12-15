@@ -32,6 +32,7 @@ env:
   TK_ORGANIZATION: ${{ secrets.TK_ORGANIZATION }}
   TK_ENVIRONMENT: ${{ secrets.TK_ENVIRONMENT }}
   TK_TOKEN: ${{ secrets.TK_TOKEN }}
+  TK_AGENT: ${{ secrets.TK_AGENT }}
 
 jobs:
 
