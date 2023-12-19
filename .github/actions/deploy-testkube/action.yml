@@ -50,3 +50,8 @@ runs:
         organization: ${{ env.TK_ORGANIZATION }}
         environment: ${{ env.TK_ENVIRONMENT }}
         token: ${{ env.TK_TOKEN }}
+
+    - name: Expose API
+      shell: bash
+      run: |
+        kubectl port-forward svc/testkube-api-server -n testkube 8088:8088 > /dev/null 2>&1 &

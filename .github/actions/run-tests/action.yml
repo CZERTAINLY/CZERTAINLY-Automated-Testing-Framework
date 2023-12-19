@@ -39,11 +39,21 @@ runs:
       run: |
         testkube get execution
         
-        envsubst < ${{ github.workspace }}/adaptive_card_template.json
-        
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           testkube get execution $test-$RUN_ID-$JOB_ID
           if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
+            curl -s http://localhost:8088/v1/tests/auth-test/executions/auth-testing > execution_result.json
+            EXECUTION_ID=$(jq -r '.id' execution_result.json)
+            ERROR_MESSAGE=$(jq -r '.executionResult.errorMessage' execution_result.json)
+            TEST_TYPE=$(jq -r '.testType' execution_result.json)
+            TEST_NAME="$test"
+        
+            envsubst < ${{ github.workspace }}/adaptive_card_template.json > adaptive_card.json
+            cat adaptive_card.json
+        
+            curl -X POST -s -H "Content-Type: application/json" -d @adaptive_card.json \
+              $TEAMS_INCOMING_WEBHOOK_URL
+        
             exit 1
           fi
         done
