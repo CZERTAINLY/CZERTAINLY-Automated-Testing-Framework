@@ -1,0 +1,77 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "contentUrl": null,
+      "content": {
+        "msteams": {
+          "width": "Full"
+        },
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "backgroundImage": "https://singlecolorimage.com/get/f4c8c7/100x100",
+        "body": [
+          {
+            "type": "ColumnSet",
+            "columns": [
+              {
+                "type": "Column",
+                "width": "auto",
+                "items": [
+                  {
+                    "type": "Image",
+                    "url": "data:image/png;base64,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",
+                    "size": "small",
+                    "altText": "CZERTAINLY"
+                  }
+                ]
+              },
+              {
+                "type": "Column",
+                "width": "auto",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "${TEST_FOLDER_NAME} - ${TEST_NAME} - ${TEST_TYPE}",
+                    "size": "extraLarge",
+                    "spacing": "none",
+                    "wrap": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "TextBlock",
+            "text": "Test failed with the following error message:"
+          },
+          {
+            "type": "RichTextBlock",
+            "inlines": [
+              {
+                "type": "TextRun",
+                "text": "${ERROR_MESSAGE}",
+                "size": "small",
+                "fontType": "monospace"
+              }
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "GitHub Action",
+            "url": "https://github.com/CZERTAINLY/CZERTAINLY-Automated-Testing-Framework/actions/runs/${RUN_ID}/job/${JOB_ID}"
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "Testkube Dashboard",
+            "url": "https://app.testkube.io/organization/${TK_ORGANIZATION}/environment/${TK_ENVIRONMENT}/dashboard/tests/${TEST_NAME}/executions/${EXECUTION_ID}"
+          }
+        ]
+      }
+    }
+  ]
+}

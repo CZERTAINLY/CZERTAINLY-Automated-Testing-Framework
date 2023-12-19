@@ -39,6 +39,8 @@ runs:
       run: |
         testkube get execution
         
+        envsubst < ${{ github.workspace }}/adaptive_card_template.json
+        
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           testkube get execution $test-$RUN_ID-$JOB_ID
           if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
