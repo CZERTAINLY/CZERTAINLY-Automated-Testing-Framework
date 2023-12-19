@@ -43,7 +43,8 @@ runs:
           testkube get execution $test-$RUN_ID-$JOB_ID
         
           if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
-            curl -s http://localhost:8088/v1/tests/auth-test/executions/auth-testing > ${{ github.workspace }}/execution_result.json
+            echo "Get information about the execution"
+            curl -s http://localhost:8088/v1/tests/$test/executions/$test-$RUN_ID-$JOB_ID > ${{ github.workspace }}/execution_result.json
             EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/execution_result.json)
             ERROR_MESSAGE=$(jq -r '.executionResult.errorMessage' ${{ github.workspace }}/execution_result.json)
             TEST_TYPE=$(jq -r '.testType' ${{ github.workspace }}/execution_result.json)
@@ -53,7 +54,8 @@ runs:
             cat ${{ github.workspace }}/adaptive_card.json
         
             echo "Sending adaptive card to Teams"
-            curl -X POST -s -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
+            curl -X POST --silent --write-out '%{http_code}' --output /dev/null \
+              -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
               $TEAMS_INCOMING_WEBHOOK_URL
         
             exit 1
