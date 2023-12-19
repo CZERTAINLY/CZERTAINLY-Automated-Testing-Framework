@@ -40,11 +40,11 @@ runs:
         testkube get execution
         
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get execution $test-$RUN_ID-$JOB_ID
+          # testkube get execution $test-$RUN_ID-$JOB_ID
         
           if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
             echo "Get information about the execution"
-            curl -s http://localhost:8088/v1/tests/$test/executions/$test-$RUN_ID-$JOB_ID > ${{ github.workspace }}/execution_result.json
+            curl http://localhost:8088/v1/tests/$test/executions/$test-$RUN_ID-$JOB_ID > ${{ github.workspace }}/execution_result.json
             EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/execution_result.json)
             ERROR_MESSAGE=$(jq -r '.executionResult.errorMessage' ${{ github.workspace }}/execution_result.json)
             TEST_TYPE=$(jq -r '.testType' ${{ github.workspace }}/execution_result.json)
