@@ -34,60 +34,74 @@ runs:
       run: |
         kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
 
-    - name: Print test results
+    - name: Store test results
       shell: bash
       run: |
-        # testkube get execution
-        
+        mkdir -p ${{ github.workspace }}/test-results
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get execution $test-$RUN_ID-$JOB_ID
-        
-          if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
-            curl --silent http://localhost:8088/v1/tests/$test/executions/$test-$RUN_ID-$JOB_ID > ${{ github.workspace }}/execution_result.json
-        
-            # cat ${{ github.workspace }}/execution_result.json
-        
-            export EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/execution_result.json)
-            export TEST_LABELS=$(jq '.labels' ${{ github.workspace }}/execution_result.json | sed 's/$/\\n/g' | tr -d '\n' | sed 's/"/\\"/g')
-            export TEST_TYPE=$(jq -r '.testType' ${{ github.workspace }}/execution_result.json)
-            export TEST_NAME="$test"
-        
-            envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
-            cat ${{ github.workspace }}/adaptive_card.json
-        
-            echo "Sending notification to Teams"
-            #curl -X POST --silent --write-out '%{http_code}' --output /dev/null \
-            #  -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
-            #  $TEAMS_INCOMING_WEBHOOK_URL
-        
-            curl -X POST --silent \
-              -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
-              $TEAMS_INCOMING_WEBHOOK_URL
-        
-            exit 1
-          fi
+          testkube get execution $test-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json
         done
 
-    - name: Run all test-suites
-      shell: bash
-      run: |
-        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube run testsuite $test --name $test-$RUN_ID-$JOB_ID
-        done
+    - name: Upload test results as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: ${{ github.workspace }}/test-results
 
-    - name: Wait for test-suites to finish
-      shell: bash
-      run: |
-        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
-
-    - name: Print test-suite results
-      shell: bash
-      run: |
-        testkube get testsuiteexecution
-        
-        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get execution $test-$RUN_ID-$JOB_ID
-          if [[ $(kubectl get testsuite.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
-            exit 1
-          fi
-        done
+#    - name: Print test results
+#      shell: bash
+#      run: |
+#        # testkube get execution
+#
+#        for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+#          testkube get execution $test-$RUN_ID-$JOB_ID
+#
+#          if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
+#            curl --silent http://localhost:8088/v1/tests/$test/executions/$test-$RUN_ID-$JOB_ID > ${{ github.workspace }}/execution_result.json
+#
+#            # cat ${{ github.workspace }}/execution_result.json
+#
+#            export EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/execution_result.json)
+#            export TEST_LABELS=$(jq '.labels' ${{ github.workspace }}/execution_result.json | sed 's/$/\\n/g' | tr -d '\n' | sed 's/"/\\"/g')
+#            export TEST_TYPE=$(jq -r '.testType' ${{ github.workspace }}/execution_result.json)
+#            export TEST_NAME="$test"
+#
+#            envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
+#            cat ${{ github.workspace }}/adaptive_card.json
+#
+#            echo "Sending notification to Teams"
+#            #curl -X POST --silent --write-out '%{http_code}' --output /dev/null \
+#            #  -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
+#            #  $TEAMS_INCOMING_WEBHOOK_URL
+#
+#            curl -X POST --silent \
+#              -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
+#              $TEAMS_INCOMING_WEBHOOK_URL
+#
+#            exit 1
+#          fi
+#        done
+#
+#    - name: Run all test-suites
+#      shell: bash
+#      run: |
+#        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+#          testkube run testsuite $test --name $test-$RUN_ID-$JOB_ID
+#        done
+#
+#    - name: Wait for test-suites to finish
+#      shell: bash
+#      run: |
+#        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
+#
+#    - name: Print test-suite results
+#      shell: bash
+#      run: |
+#        testkube get testsuiteexecution
+#
+#        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+#          testkube get execution $test-$RUN_ID-$JOB_ID
+#          if [[ $(kubectl get testsuite.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
+#            exit 1
+#          fi
+#        done
