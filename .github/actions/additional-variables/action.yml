@@ -1,0 +1,18 @@
+name: Additional variables
+description: Get additional variables and IDs required
+
+runs:
+  using: "composite"
+
+  steps:
+    -
+    - name: Get Run and Job ID from GH API
+      id: get-job-id
+      env:
+        GH_TOKEN: ${{ env.GITHUB_TOKEN }}
+      shell: bash
+      run: |
+        jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs)
+        job_id=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .id')
+        echo "JOB_ID=$job_id" >> $GITHUB_ENV
+        echo "RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
