@@ -35,6 +35,8 @@ env:
   TK_TOKEN: ${{ secrets.TK_TOKEN }}
   TK_AGENT: ${{ secrets.TK_AGENT }}
   TEAMS_INCOMING_WEBHOOK_URL: ${{ secrets.TEAMS_INCOMING_WEBHOOK_URL }}
+  RUN_TESTS: ${{ fromJson(inputs.configuration).testkube.run-tests || 'true' }}
+  RUN_TEST_SUITES: ${{ fromJson(inputs.configuration).testkube.run-test-suites || 'false' }}
 
 jobs:
 
@@ -90,6 +92,18 @@ jobs:
         run: |
           echo '${{ inputs.configuration }}' | jq .
 
+      # Get the ID for the identification of this run and job
+      - name: Get Run and Job ID from GH API
+        id: get-job-id
+        env:
+          GH_TOKEN: ${{ env.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs)
+          job_id=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .id')
+          echo "JOB_ID=$job_id" >> $GITHUB_ENV
+          echo "RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
+
       # Check out the repository
       - uses: actions/checkout@v4
 
@@ -129,4 +143,14 @@ jobs:
 
       # Create Testkube CRDs and run tests
       - name: Run tests
+        if: ${{ env.RUN_TESTS }} == 'true'
         uses: ./.github/actions/run-tests
+
+      # Create Testkube CRDs and run test-suites
+      - name: Run test-suites
+        if: ${{ env.RUN_TEST_SUITES }} == 'true'
+        uses: ./.github/actions/run-test-suites
+
+      # Upload test results as artifact
+      - name: Upload test results as artifact
+        uses: ./.github/actions/upload-results

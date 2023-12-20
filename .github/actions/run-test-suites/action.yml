@@ -1,0 +1,24 @@
+name: Run test-suites
+description: Apply Testkube CRDs and run all test-suites
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Create Testkube CRDs
+      shell: bash
+      run: |
+        kubectl apply -f $TEST_FOLDER_PATH/tests/test-suite --recursive
+
+    - name: Run all test-suites
+      shell: bash
+      run: |
+        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          testkube run testsuite $test --name $test-$RUN_ID-$JOB_ID
+        done
+
+    - name: Wait for test-suites to finish
+      shell: bash
+      run: |
+        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s

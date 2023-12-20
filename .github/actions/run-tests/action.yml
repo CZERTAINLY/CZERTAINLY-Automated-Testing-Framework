@@ -9,18 +9,7 @@ runs:
     - name: Create Testkube CRDs
       shell: bash
       run: |
-        kubectl apply -f $TEST_FOLDER_PATH/tests --recursive
-
-    - name: Get Run and Job ID from GH API
-      id: get-job-id
-      env:
-        GH_TOKEN: ${{ env.GITHUB_TOKEN }}
-      shell: bash
-      run: |
-        jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs)
-        job_id=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .id')
-        echo "JOB_ID=$job_id" >> $GITHUB_ENV
-        echo "RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
+        kubectl apply -f $TEST_FOLDER_PATH/tests/test --recursive
 
     - name: Run all tests
       shell: bash
@@ -33,37 +22,6 @@ runs:
       shell: bash
       run: |
         kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
-
-    - name: Run all test-suites
-      shell: bash
-      run: |
-        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube run testsuite $test --name $test-$RUN_ID-$JOB_ID
-        done
-
-    - name: Wait for test-suites to finish
-      shell: bash
-      run: |
-        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
-
-    - name: Store test results
-      shell: bash
-      run: |
-        mkdir -p ${{ github.workspace }}/test-results
-        
-        for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get execution $test-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json
-        done
-        
-        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get execution $test-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json
-        done
-
-    - name: Upload test results as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: ${{ github.workspace }}/test-results
 
 #    - name: Print test results
 #      shell: bash
