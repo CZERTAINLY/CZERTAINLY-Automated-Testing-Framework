@@ -49,24 +49,9 @@ runs:
             # cat ${{ github.workspace }}/execution_result.json
         
             export EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/execution_result.json)
-            #echo "EXECUTION_ID = $EXECUTION_ID"
-            #echo "EXECUTION_ID=$EXECUTION_ID" >> $GITHUB_ENV
-            #echo "$EXECUTION_ID"
-            #echo "EXECUTION_ID = $EXECUTION_ID"
-        
-            export ERROR_MESSAGE=$(jq '.executionResult.errorMessage' ${{ github.workspace }}/execution_result.json)
-            #echo "ERROR_MESSAGE<<EOF" >> $GITHUB_ENV
-            #echo "$ERROR_MESSAGE" >> $GITHUB_ENV
-            #echo "EOF" >> $GITHUB_ENV
-            #echo "$ERROR_MESSAGE"
-        
+            export TEST_LABELS=$(jq '.labels' ${{ github.workspace }}/execution_result.json | sed 's/$/\\n/g' | tr -d '\n' | sed 's/"/\\"/g')
             export TEST_TYPE=$(jq -r '.testType' ${{ github.workspace }}/execution_result.json)
-            #echo "TEST_TYPE=$TEST_TYPE" >> $GITHUB_ENV
-            #echo "$TEST_TYPE"
-        
             export TEST_NAME="$test"
-            #echo "TEST_NAME=$TEST_NAME" >> $GITHUB_ENV
-            #echo "$TEST_NAME"
         
             envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
             cat ${{ github.workspace }}/adaptive_card.json

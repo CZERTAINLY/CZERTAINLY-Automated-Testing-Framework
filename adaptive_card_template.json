@@ -34,7 +34,7 @@
                 "items": [
                   {
                     "type": "TextBlock",
-                    "text": "${TEST_FOLDER_NAME} - ${TEST_NAME} - ${TEST_TYPE}",
+                    "text": "ATF TEST FAILED!",
                     "size": "extraLarge",
                     "spacing": "none",
                     "wrap": true
@@ -45,14 +45,25 @@
           },
           {
             "type": "TextBlock",
-            "text": "Test failed with the following error message:"
+            "text": "**Test folder:** ${TEST_FOLDER}",
+            "size": "small"
+          },
+          {
+            "type": "TextBlock",
+            "text": "**Test name:** ${TEST_NAME}",
+            "size": "small"
+          },
+          {
+            "type": "TextBlock",
+            "text": "**Test type:** ${TEST_TYPE}",
+            "size": "small"
           },
           {
             "type": "RichTextBlock",
             "inlines": [
               {
                 "type": "TextRun",
-                "text": ${ERROR_MESSAGE},
+                "text": "${TEST_LABELS}",
                 "size": "small",
                 "fontType": "monospace"
               }
