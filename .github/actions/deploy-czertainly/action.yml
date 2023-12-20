@@ -1,0 +1,16 @@
+name: Deploy CZERTAINLY
+description: Install and configure CZERTAINLY
+
+runs:
+  using: "composite"
+
+  steps:
+
+    # Install CZERTAINLY from Helm chart
+    - name: Install CZERTAINLY version ${{ env.CZERTAINLY_VERSION }}
+      shell: bash
+      run: |
+        echo "Installing CZERTAINLY version $CZERTAINLY_VERSION"
+        kubectl create namespace czertainly
+        helm install --namespace czertainly -f $TEST_FOLDER_PATH/czertainly-values.yaml czertainly-tlm \
+          oci://harbor.3key.company/czertainly-helm/czertainly --version $CZERTAINLY_VERSION --timeout 600s

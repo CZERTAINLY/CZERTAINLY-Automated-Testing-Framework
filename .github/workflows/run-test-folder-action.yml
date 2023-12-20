@@ -118,13 +118,9 @@ jobs:
         with:
           dist: ${{ env.K8S_CLUSTER_DIST }}
 
-      # Install CZERTAINLY from Helm chart
-      - name: Install CZERTAINLY version ${{ env.CZERTAINLY_VERSION }}
-        run: |
-          echo "Installing CZERTAINLY version $CZERTAINLY_VERSION"
-          kubectl create namespace czertainly
-          helm install --namespace czertainly -f $TEST_FOLDER_PATH/czertainly-values.yaml czertainly-tlm \
-            oci://harbor.3key.company/czertainly-helm/czertainly --version $CZERTAINLY_VERSION --timeout 600s
+      # Deploy CZERTAINLY
+      - name: Deploy CZERTAINLY version ${{ env.CZERTAINLY_VERSION }}
+        uses: ./.github/actions/deploy-czertainly
 
       # Deploy Testkube environment
       - name: Deploy Testkube
