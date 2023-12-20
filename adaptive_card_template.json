@@ -11,7 +11,7 @@
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
         "type": "AdaptiveCard",
         "version": "1.5",
-        "backgroundImage": "https://singlecolorimage.com/get/f4c8c7/100x100",
+        "backgroundImage": "https://singlecolorimage.com/get/fdf9f9/100x100",
         "body": [
           {
             "type": "ColumnSet",
