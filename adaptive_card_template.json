@@ -52,7 +52,7 @@
             "inlines": [
               {
                 "type": "TextRun",
-                "text": "${ERROR_MESSAGE}",
+                "text": ${ERROR_MESSAGE},
                 "size": "small",
                 "fontType": "monospace"
               }

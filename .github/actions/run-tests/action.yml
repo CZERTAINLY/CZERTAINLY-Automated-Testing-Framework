@@ -72,7 +72,11 @@ runs:
             cat ${{ github.workspace }}/adaptive_card.json
         
             echo "Sending adaptive card to Teams"
-            curl -X POST --silent --write-out '%{http_code}' --output /dev/null \
+            #curl -X POST --silent --write-out '%{http_code}' --output /dev/null \
+            #  -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
+            #  $TEAMS_INCOMING_WEBHOOK_URL
+        
+            curl -X POST \
               -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
               $TEAMS_INCOMING_WEBHOOK_URL
         
