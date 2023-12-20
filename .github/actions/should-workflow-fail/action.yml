@@ -1,0 +1,35 @@
+name: Should workflow fail
+description: Check the status of the tests and test-suites and fail the workflow if any of them failed
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Print results of executions
+      shell: bash
+      run: |
+        for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          result=$(testkube get execution $test-$RUN_ID-$JOB_ID --output json | jq -r '.executionResult.status')
+          echo "Test $test result: $result"
+        done
+        
+        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          result=$(testkube get execution $test-$RUN_ID-$JOB_ID --output json | jq -r '.status')
+          echo "Test-suite $test result: $result"
+        done
+
+    - name: Fail the workflow if any test failed
+      shell: bash
+      run: |
+        for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          if [[ $(testkube get execution $test-$RUN_ID-$JOB_ID --output json | jq -r '.executionResult.status') != "passed" ]]; then
+            exit 1
+          fi
+        done
+        
+        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          if [[ $(testkube get execution $test-$RUN_ID-$JOB_ID --output json | jq -r '.status') != "passed" ]]; then
+            exit 1
+          fi
+        done

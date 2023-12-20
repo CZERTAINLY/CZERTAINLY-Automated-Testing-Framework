@@ -155,3 +155,7 @@ jobs:
       # Upload test results as artifact
       - name: Upload test results as artifact
         uses: ./.github/actions/upload-results
+
+      # Check if any test failed and fail the workflow if so
+      - name: Should workflow fail
+        uses: ./.github/actions/should-workflow-fail
