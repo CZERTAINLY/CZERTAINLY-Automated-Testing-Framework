@@ -95,12 +95,12 @@ jobs:
         run: |
           echo '${{ inputs.configuration }}' | jq .
 
+      # Check out the repository
+      - uses: actions/checkout@v4
+
       # Get additional variables and IDs required
       - name: Get additional variables
         uses: ./.github/actions/additional-variables
-
-      # Check out the repository
-      - uses: actions/checkout@v4
 
       # Initialize database with the data from the initdb folder
       - name: Initialize database
