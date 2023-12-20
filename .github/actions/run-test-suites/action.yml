@@ -7,11 +7,13 @@ runs:
   steps:
 
     - name: Create Testkube CRDs
+      if: env.RUN_TEST_SUITES == 'true'
       shell: bash
       run: |
         kubectl apply -f $TEST_FOLDER_PATH/tests/test-suite --recursive
 
     - name: Run all test-suites
+      if: env.RUN_TEST_SUITES == 'true'
       shell: bash
       run: |
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
@@ -19,6 +21,7 @@ runs:
         done
 
     - name: Wait for test-suites to finish
+      if: env.RUN_TEST_SUITES == 'true'
       shell: bash
       run: |
         kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s

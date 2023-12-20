@@ -148,7 +148,7 @@ jobs:
 
       # Create Testkube CRDs and run test-suites
       - name: Run test-suites
-        if: ${{ env.RUN_TEST_SUITES }} == 'true'
+        if: env.RUN_TEST_SUITES == 'true'
         uses: ./.github/actions/run-test-suites
 
       # Upload test results as artifact
