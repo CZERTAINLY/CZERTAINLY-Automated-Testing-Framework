@@ -24,6 +24,7 @@ runs:
       uses: kubeshop/setup-testkube@v1
       with:
         namespace: testkube
+        version: ${{ env.TK_VERSION }}
 
     - name: Deploy Testkube using Helm
       if: env.TK_SUBSCRIPTION == 'pro'
@@ -47,6 +48,7 @@ runs:
       uses: kubeshop/setup-testkube@v1
       with:
         namespace: testkube
+        version: ${{ env.TK_VERSION }}
         organization: ${{ env.TK_ORGANIZATION }}
         environment: ${{ env.TK_ENVIRONMENT }}
         token: ${{ env.TK_TOKEN }}
