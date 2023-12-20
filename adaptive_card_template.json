@@ -45,7 +45,7 @@
           },
           {
             "type": "TextBlock",
-            "text": "**Test folder:** ${TEST_FOLDER}",
+            "text": "**Test folder:** ${TEST_FOLDER_NAME}",
             "size": "small"
           },
           {
