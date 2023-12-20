@@ -18,7 +18,7 @@ runs:
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           if [[ $(jq -r '.executionResult.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
             export EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
-            export TEST_LABELS=$(jq '.labels' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json) | sed 's/$/\\n/g' | tr -d '\n' | sed 's/"/\\"/g')
+            export TEST_LABELS=$(jq '.labels' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json | sed 's/$/\\n/g' | tr -d '\n' | sed 's/"/\\"/g')
             export TEST_TYPE=$(jq -r '.testType' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
             export TEST_NAME="$test"
         
