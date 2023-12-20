@@ -45,10 +45,20 @@ runs:
           if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
             echo "Get information about the execution"
             curl -s http://localhost:8088/v1/tests/$test/executions/$test-$RUN_ID-$JOB_ID > ${{ github.workspace }}/execution_result.json
+        
             EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/execution_result.json)
+            echo "EXECUTION_ID=$EXECUTION_ID" >> $GITHUB_ENV
+        
             ERROR_MESSAGE=$(jq -r '.executionResult.errorMessage' ${{ github.workspace }}/execution_result.json)
+            echo "ERROR_MESSAGE<<EOF" >> $GITHUB_ENV
+            echo "$ERROR_MESSAGE" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+        
             TEST_TYPE=$(jq -r '.testType' ${{ github.workspace }}/execution_result.json)
+            echo "TEST_TYPE=$TEST_TYPE" >> $GITHUB_ENV
+        
             TEST_NAME="$test"
+            echo "TEST_NAME=$TEST_NAME" >> $GITHUB_ENV
         
             envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
             cat ${{ github.workspace }}/adaptive_card.json
