@@ -40,7 +40,7 @@ runs:
         testkube get execution
         
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get execution $test-$RUN_ID-$JOB_ID
+          # testkube get execution $test-$RUN_ID-$JOB_ID
         
           if [[ $(kubectl get tests.tests.testkube.io $test -n testkube -o jsonpath='{.status.latestExecution.status}') != "passed" ]]; then
             echo "Get information about the execution"
