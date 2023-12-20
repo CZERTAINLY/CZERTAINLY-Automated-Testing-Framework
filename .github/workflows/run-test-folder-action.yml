@@ -144,7 +144,7 @@ jobs:
 
       # Create Testkube CRDs and run tests
       - name: Run tests
-        if: ${{ env.RUN_TESTS }} == 'true'
+        if: env.RUN_TESTS == 'true'
         uses: ./.github/actions/run-tests
 
       # Create Testkube CRDs and run test-suites
