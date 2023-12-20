@@ -53,7 +53,7 @@ runs:
             export TEST_NAME="$test"
         
             envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
-            # cat ${{ github.workspace }}/adaptive_card.json
+            cat ${{ github.workspace }}/adaptive_card.json
         
             echo "Sending notification to Teams"
             #curl -X POST --silent --write-out '%{http_code}' --output /dev/null \
