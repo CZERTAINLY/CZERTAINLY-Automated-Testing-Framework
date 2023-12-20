@@ -102,15 +102,9 @@ jobs:
       - name: Get additional variables
         uses: ./.github/actions/additional-variables
 
-      # Initialize database with the data from the initdb folder
-      - name: Initialize database
-        env:
-          PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}
-        run: |
-          for entry in "$TEST_FOLDER_PATH/initdb"/*
-          do
-            psql -h localhost -U $POSTGRES_USER -d $POSTGRES_DB -f $entry
-          done
+      # Initialize data for test results or database
+      - name: Initialize data
+        uses: ./.github/actions/initialize-data
 
       # Set up Helm
       - name: Set up Helm

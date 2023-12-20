@@ -5,7 +5,7 @@ runs:
   using: "composite"
 
   steps:
-    -
+
     - name: Get Run and Job ID from GH API
       id: get-job-id
       env:
