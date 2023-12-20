@@ -34,11 +34,28 @@ runs:
       run: |
         kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
 
+    - name: Run all test-suites
+      shell: bash
+      run: |
+        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          testkube run testsuite $test --name $test-$RUN_ID-$JOB_ID
+        done
+
+    - name: Wait for test-suites to finish
+      shell: bash
+      run: |
+        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
+
     - name: Store test results
       shell: bash
       run: |
         mkdir -p ${{ github.workspace }}/test-results
+        
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          testkube get execution $test-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json
+        done
+        
+        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           testkube get execution $test-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json
         done
 
@@ -81,18 +98,6 @@ runs:
 #            exit 1
 #          fi
 #        done
-#
-#    - name: Run all test-suites
-#      shell: bash
-#      run: |
-#        for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-#          testkube run testsuite $test --name $test-$RUN_ID-$JOB_ID
-#        done
-#
-#    - name: Wait for test-suites to finish
-#      shell: bash
-#      run: |
-#        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
 #
 #    - name: Print test-suite results
 #      shell: bash
