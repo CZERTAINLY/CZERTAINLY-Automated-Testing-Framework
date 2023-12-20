@@ -1,0 +1,17 @@
+name: Send notification
+description: Send notification about failed tests
+
+inputs:
+  channel:
+    description: 'Notification type'
+    required: true
+    default: 'teams'
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Notify about failed tests in Teams
+      if: ${{ inputs.channel }} == 'teams'
+      uses: ./.github/actions/send-notification/teams

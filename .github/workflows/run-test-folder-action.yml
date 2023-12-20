@@ -38,6 +38,8 @@ env:
   TEAMS_INCOMING_WEBHOOK_URL: ${{ secrets.TEAMS_INCOMING_WEBHOOK_URL }}
   RUN_TESTS: ${{ fromJson(inputs.configuration).testkube.run-tests || 'true' }}
   RUN_TEST_SUITES: ${{ fromJson(inputs.configuration).testkube.run-test-suites || 'false' }}
+  SEND_NOTIFICATION: ${{ fromJson(inputs.configuration).notifications.enabled || 'false' }}
+  NOTIFICATION_CHANNEL: ${{ fromJson(inputs.configuration).notifications.channel || 'teams' }}
 
 jobs:
 
@@ -155,6 +157,13 @@ jobs:
       # Upload test results as artifact
       - name: Upload test results as artifact
         uses: ./.github/actions/upload-results
+
+      # Notify about failed tests through configured channel
+      - name: Notify about failed tests
+        if: env.SEND_NOTIFICATION == 'true'
+        uses: ./.github/actions/send-notification
+        with:
+          channel: ${{ env.NOTIFICATION_CHANNEL }}
 
       # Check if any test failed and fail the workflow if so
       - name: Should workflow fail

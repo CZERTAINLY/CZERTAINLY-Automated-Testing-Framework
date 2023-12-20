@@ -10,12 +10,12 @@ runs:
       shell: bash
       run: |
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          result=$(testkube get execution $test-$RUN_ID-$JOB_ID --output json | jq -r '.executionResult.status')
+          result=$(jq -r '.executionResult.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
           echo "Test $test result: $result"
         done
         
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          result=$(testkube get execution $test-$RUN_ID-$JOB_ID --output json | jq -r '.status')
+          result=$(jq -r '.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
           echo "Test-suite $test result: $result"
         done
 
@@ -23,13 +23,13 @@ runs:
       shell: bash
       run: |
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          if [[ $(testkube get execution $test-$RUN_ID-$JOB_ID --output json | jq -r '.executionResult.status') != "passed" ]]; then
+          if [[ $(jq -r '.executionResult.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
             exit 1
           fi
         done
         
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          if [[ $(testkube get execution $test-$RUN_ID-$JOB_ID --output json | jq -r '.status') != "passed" ]]; then
+          if [[ $(jq -r '.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
             exit 1
           fi
         done
