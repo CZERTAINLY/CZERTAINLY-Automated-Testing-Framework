@@ -54,7 +54,7 @@ runs:
             #echo "$EXECUTION_ID"
             #echo "EXECUTION_ID = $EXECUTION_ID"
         
-            export ERROR_MESSAGE=$(jq -r '.executionResult.errorMessage' ${{ github.workspace }}/execution_result.json)
+            export ERROR_MESSAGE=$(jq '.executionResult.errorMessage' ${{ github.workspace }}/execution_result.json)
             #echo "ERROR_MESSAGE<<EOF" >> $GITHUB_ENV
             #echo "$ERROR_MESSAGE" >> $GITHUB_ENV
             #echo "EOF" >> $GITHUB_ENV
