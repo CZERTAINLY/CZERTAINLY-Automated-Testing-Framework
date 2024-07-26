@@ -21,10 +21,10 @@
     "version": "2.10.0"
   },
   "testkube": {
-    "subscription": "pro",
+    "subscription": "free",
     "version": "1.16.16"
   },
   "notifications": {
-    "enabled": true
+    "enabled": false
   }
 }
