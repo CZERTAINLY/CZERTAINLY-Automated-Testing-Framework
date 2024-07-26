@@ -22,7 +22,7 @@
   },
   "testkube": {
     "subscription": "free",
-    "version": "1.17.99"
+    "version": "2.0.22"
   },
   "notifications": {
     "enabled": false
