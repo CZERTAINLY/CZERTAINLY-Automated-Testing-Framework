@@ -22,7 +22,8 @@
   },
   "testkube": {
     "subscription": "free",
-    "version": "2.0.22"
+    "helm_version": "2.0.22",
+    "agent_version": "2.0.13"
   },
   "notifications": {
     "enabled": false

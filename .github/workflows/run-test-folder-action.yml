@@ -34,7 +34,8 @@ env:
   TK_ENVIRONMENT: ${{ secrets.TK_ENVIRONMENT }}
   TK_TOKEN: ${{ secrets.TK_TOKEN }}
   TK_AGENT: ${{ secrets.TK_AGENT }}
-  TK_VERSION: ${{ fromJson(inputs.configuration).testkube.version }}
+  TK_HELM_VERSION: ${{ fromJson(inputs.configuration).testkube.helm_version }}
+  TK_AGENT_VERSION: ${{ fromJson(inputs.configuration).testkube.agent_version }}
   TEAMS_INCOMING_WEBHOOK_URL: ${{ secrets.TEAMS_INCOMING_WEBHOOK_URL }}
   RUN_TESTS: ${{ fromJson(inputs.configuration).testkube.run-tests || 'true' }}
   RUN_TEST_SUITES: ${{ fromJson(inputs.configuration).testkube.run-test-suites || 'false' }}
