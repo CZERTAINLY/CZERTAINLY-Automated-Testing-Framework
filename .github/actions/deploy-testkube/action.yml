@@ -15,7 +15,8 @@ runs:
       if: env.TK_SUBSCRIPTION == 'free'
       shell: bash
       run: |-
-        helm upgrade --install --atomic --timeout 600s testkube kubeshop/testkube --namespace testkube --create-namespace
+        helm upgrade --install --atomic --create-namespace testkube kubeshop/testkube \
+          --namespace testkube --version $TK_VERSION --timeout 600s
 
         kubectl describe pods -n testkube -l app.kubernetes.io/name=api-server
 
@@ -36,7 +37,7 @@ runs:
           --set testkube-api.cloud.envId=$TK_ENVIRONMENT \
           --set testkube-api.minio.enabled=false --set mongodb.enabled=false \
           --set testkube-dashboard.enabled=false --set testkube-api.cloud.url=agent.testkube.io:443 \
-          --namespace testkube
+          --namespace testkube --version $TK_VERSION --timeout 600s
 
         kubectl describe pods -n testkube -l app.kubernetes.io/name=api-server
         
