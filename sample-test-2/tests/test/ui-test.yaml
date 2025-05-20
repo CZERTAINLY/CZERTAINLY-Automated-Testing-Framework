@@ -1,0 +1,57 @@
+kind: TestWorkflow
+apiVersion: testworkflows.testkube.io/v1
+metadata:
+  name: ui-test
+  namespace: testkube
+  labels:
+    testkube.io/name: Cypress
+spec:
+  content:
+    git:
+      uri: https://github.com/CZERTAINLY/CZERTAINLY-FE-Administrator
+      revision: main
+  container:
+    workingDir: /data/repo
+    image: cypress/included:14.2.0
+    env:
+      - name: ADMIN_URL
+        valueFrom:
+          secretKeyRef:
+            name: testkube-tw-ui-9m1n2h
+            key: env-admin-url
+      - name: ADMIN_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: testkube-tw-ui-9m1n2h
+            key: env-admin-username
+      - name: ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: testkube-tw-ui-9m1n2h
+            key: env-admin-password
+  steps:
+    - name: Install dependencies
+      shell: npm install
+    - name: Generate cypress.env.json
+      shell: |
+        echo "Creating cypress.env.json from env variables..."
+        cat <<EOF > cypress.env.json
+        {
+          "ADMIN_URL": "${ADMIN_URL}",
+          "ADMIN_USERNAME": "${ADMIN_USERNAME}",
+          "ADMIN_PASSWORD": "${ADMIN_PASSWORD}"
+        }
+        EOF
+    - name: Run tests
+      run:
+        args:
+          - --config
+          - video=true
+          - --browser
+          - electron
+          - --spec
+          - cypress/e2e/upload_certificate.cy.ts
+      artifacts:
+        paths:
+          - cypress/videos/**/*
+status: {}

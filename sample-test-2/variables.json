@@ -1,0 +1,31 @@
+{
+  "k8s-cluster": {
+    "dist": "microk8s"
+  },
+  "services": {
+    "postgresql": {
+      "enabled": true,
+      "version": 15,
+      "user": "czertainlyuser",
+      "password": "your-strong-password",
+      "db": "czertainlydb",
+      "port": 5432
+    },
+    "mail": {
+      "enabled": false,
+      "version": "12.1.0",
+      "port": 25
+    }
+  },
+  "czertainly": {
+    "version": "2.14.1"
+  },
+  "testkube": {
+    "subscription": "free",
+    "helm_version": "2.1.173",
+    "agent_version": "2.1.173"
+  },
+  "notifications": {
+    "enabled": false
+  }
+}
