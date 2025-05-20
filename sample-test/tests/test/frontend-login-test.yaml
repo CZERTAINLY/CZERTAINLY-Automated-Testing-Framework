@@ -22,7 +22,7 @@ spec:
         value: "your-strong-password"
       ADMIN_URL:
         name: ADMIN_URL
-        value: "https://develop.czertainly.online/administrator/"
+        value: "https://develop-02.czertainly.online/administrator/"
         type: basic
       ADMIN_USERNAME:
         name: ADMIN_USERNAME
