@@ -24,11 +24,7 @@ runs:
       run: |
         kubectl -n testkube get jobs.batch -o wide
         
-        for i in {1..60}; do
-          kubectl -n testkube get jobs.batch -o wide
-          sleep 10
-        done
+        kubectl -n testkube wait job --for=condition=complete --timeout=600s & pidOK=$!
+        kubectl -n testkube wait job --for=condition=failed --timeout=600s & pidFail=$!
         
-        kubectl -n testkube wait job \
-          --for=condition=complete \
-          --timeout=600s
+        wait -n "$pidOK" "$pidFail"
