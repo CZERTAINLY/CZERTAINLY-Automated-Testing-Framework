@@ -23,12 +23,6 @@ runs:
           echo "Test-suite $test result: $result"
         done
         
-        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube
-        
-        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name"
-        
-        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube -o yaml
-        
         testkube get testworkflow
         testkube get testworkflowexecution
         for test in $(kubectl get testworkflows.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
