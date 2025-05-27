@@ -14,12 +14,17 @@ runs:
     - name: Run all testworkflows
       shell: bash
       run: |
+        LABEL="ci-run=${RUN_ID}-${JOB_ID}"
         for testworkflow in $(kubectl get testworkflows.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube run testworkflow $testworkflow --name $testworkflow-$RUN_ID-$JOB_ID
+          testkube run testworkflow $testworkflow --name $testworkflow-$RUN_ID-$JOB_ID --label $LABEL
         done
 
     - name: Wait for testworkflows to finish
       shell: bash
       run: |
-        kubectl -n testkube get jobs.batch
-        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
+        kubectl -n testkube get jobs.batch -o wide
+        
+        kubectl -n testkube wait job \
+          -l $LABEL \
+          --for=condition=Complete \
+          --timeout=600s
