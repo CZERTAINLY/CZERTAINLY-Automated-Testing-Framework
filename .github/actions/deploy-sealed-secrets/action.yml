@@ -16,6 +16,10 @@ runs:
         
         mkdir -p ${{ github.workspace }}/.kube
         mkdir -p ${{ github.workspace }}/.kube/sealed-secrets
+        
+        echo $SEALED_SECRETS_KEY
+        echo $SEALED_SECRETS_CERT
+        
         echo $SEALED_SECRETS_KEY > ${{ github.workspace }}/.kube/sealed-secrets/private-key.pem
         echo $SEALED_SECRETS_CERT > ${{ github.workspace }}/.kube/sealed-secrets/public-key.pem
         
