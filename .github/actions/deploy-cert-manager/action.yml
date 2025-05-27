@@ -1,0 +1,16 @@
+name: Deploy cert-manager
+description: Install and configure cert-manager
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Deploy cert-manager
+      shell: bash
+      run: |
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.17.2/cert-manager.yaml
+        
+        echo "Waiting for cert-manager to be ready..."
+        kubectl -n cert-manager wait --for=condition=Available deployment --all --timeout=60s
+        kubectl -n cert-manager get all -o wide

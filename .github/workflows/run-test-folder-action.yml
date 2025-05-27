@@ -130,6 +130,10 @@ jobs:
       - name: Deploy Sealed Secrets
         uses: ./.github/actions/deploy-sealed-secrets
 
+      # Deploy cert-manager
+      - name: Deploy cert-manager
+        uses: ./.github/actions/deploy-cert-manager
+
       # Deploy CZERTAINLY
       - name: Deploy CZERTAINLY version ${{ env.CZERTAINLY_VERSION }}
         uses: ./.github/actions/deploy-czertainly
