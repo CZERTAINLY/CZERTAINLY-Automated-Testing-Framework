@@ -21,7 +21,7 @@ runs:
         
         kubectl create namespace sealed-secrets
         
-        kubectl -n sealed-secrets create tls sealed-secrets-tls \
+        kubectl -n sealed-secrets create secret tls sealed-secrets-tls \
           --cert=${{ github.workspace }}/.kube/sealed-secrets/public-key.pem \
           --key=${{ github.workspace }}/.kube/sealed-secrets/private-key.pem
         
