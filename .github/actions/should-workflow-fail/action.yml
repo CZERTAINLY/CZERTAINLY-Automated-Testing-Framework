@@ -18,6 +18,11 @@ runs:
           result=$(jq -r '.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
           echo "Test-suite $test result: $result"
         done
+        
+        for test in $(kubectl get testworkflows.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          result=$(jq -r '.result.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
+          echo "Test-workflow $test result: $result"
+        done
 
     - name: Fail the workflow if any test failed
       shell: bash
@@ -30,6 +35,12 @@ runs:
         
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           if [[ $(jq -r '.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
+            exit 1
+          fi
+        done
+        
+        for test in $(kubectl get testworkflows.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          if [[ $(jq -r '.result.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
             exit 1
           fi
         done
