@@ -42,6 +42,8 @@ env:
   RUN_TEST_WORKFLOWS: ${{ fromJson(inputs.configuration).testkube.run-test-workflows || 'true' }}
   SEND_NOTIFICATION: ${{ fromJson(inputs.configuration).notifications.enabled || 'false' }}
   NOTIFICATION_CHANNEL: ${{ fromJson(inputs.configuration).notifications.channel || 'teams' }}
+  SEALED_SECRETS_KEY: ${{ secrets.SEALED_SECRETS_KEY }}
+  SEALED_SECRETS_CERT: ${{ secrets.SEALED_SECRETS_CERT }}
 
 jobs:
 
