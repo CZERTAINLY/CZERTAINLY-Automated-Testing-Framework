@@ -21,7 +21,7 @@ runs:
     - name: Create internal ingress service
       shell: bash
       run: |
-        microk8s kubectl apply -n ingress -f - <<'EOF'
+        kubectl apply -n ingress -f - <<'EOF'
         apiVersion: v1
         kind: Service
         metadata:
