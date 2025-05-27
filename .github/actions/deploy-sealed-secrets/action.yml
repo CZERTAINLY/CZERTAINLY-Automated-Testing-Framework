@@ -17,20 +17,16 @@ runs:
         mkdir -p ${{ github.workspace }}/.kube
         mkdir -p ${{ github.workspace }}/.kube/sealed-secrets
         
-        echo $SEALED_SECRETS_KEY
-        echo $SEALED_SECRETS_CERT
-        
-        echo $SEALED_SECRETS_KEY > ${{ github.workspace }}/.kube/sealed-secrets/private-key.pem
-        echo $SEALED_SECRETS_CERT > ${{ github.workspace }}/.kube/sealed-secrets/public-key.pem
-        
-        cat ${{ github.workspace }}/.kube/sealed-secrets/private-key.pem
-        cat ${{ github.workspace }}/.kube/sealed-secrets/public-key.pem
+        echo "$SEALED_SECRETS_KEY" | base64 -d > ${{ github.workspace }}/.kube/sealed-secrets/private-key.pem
+        echo "$SEALED_SECRETS_CERT" | base64 -d > ${{ github.workspace }}/.kube/sealed-secrets/public-key.pem
         
         kubectl create namespace sealed-secrets
         
         kubectl -n sealed-secrets create secret tls sealed-secrets-tls \
           --cert=${{ github.workspace }}/.kube/sealed-secrets/public-key.pem \
           --key=${{ github.workspace }}/.kube/sealed-secrets/private-key.pem
+        
+        kubectl -n sealed-secrets describe secret sealed-secrets-tls
         
         kubectl -n sealed-secrets label secret sealed-secrets-tls sealedsecrets.bitnami.com/sealed-secrets-key=active
 
