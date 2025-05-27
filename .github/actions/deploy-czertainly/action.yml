@@ -14,3 +14,5 @@ runs:
         kubectl create namespace czertainly
         helm install --namespace czertainly -f $TEST_FOLDER_PATH/czertainly-values.yaml czertainly-tlm \
           oci://harbor.3key.company/czertainly-helm/czertainly --version $CZERTAINLY_VERSION --timeout 600s
+        
+        kubectl get pods -n czertainly -o wide
