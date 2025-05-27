@@ -113,6 +113,8 @@ jobs:
       - name: Add hosts to /etc/hosts
         run: |
           sudo echo "127.0.0.1 czertainly.local" | sudo tee -a /etc/hosts
+          
+          sudo cat /etc/hosts
 
       # Set up Helm
       - name: Set up Helm
