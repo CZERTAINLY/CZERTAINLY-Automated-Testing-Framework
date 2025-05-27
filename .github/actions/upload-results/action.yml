@@ -11,29 +11,29 @@ runs:
       run: |
         mkdir -p ${{ github.workspace }}/test-results
         
+        echo "Tests:"
+        testkube get test
+        echo "Test executions:"
+        testkube get execution
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           testkube get execution $test-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json
         done
         
+        echo "Test suites:"
+        testkube get testsuite
+        echo "Test suite executions:"
+        testkube get testsuiteexecution
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           testkube get execution $test-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json
         done
         
-        kubectl get testworkflows.testworkflows.testkube.io -n testkube
-        
-        kubectl get testworkflows.testworkflows.testkube.io -n testkube -o yaml
-        
-        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube
-        
-        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name"
-        
-        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube -o yaml
-        
+        echo "Test workflows:"
         testkube get testworkflow
+        echo "Test workflow executions:"
         testkube get testworkflowexecution
         
-        for testworkflow in $(kubectl get testworkflows.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          testkube get testworkflowexecution $testworkflow-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$testworkflow-$RUN_ID-$JOB_ID.json
+        for id in $(testkube get testworkflowexecution --output json | jq -r '.[].id'); do
+          testkube get testworkflowexecution $id --output json > ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.json
         done
 
     - name: Upload test results as artifact
