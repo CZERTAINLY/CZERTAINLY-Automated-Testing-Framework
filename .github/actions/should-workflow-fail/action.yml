@@ -9,16 +9,28 @@ runs:
     - name: Print results of executions
       shell: bash
       run: |
+        testkube get test
+        testkube get execution
         for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           result=$(jq -r '.executionResult.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
           echo "Test $test result: $result"
         done
         
+        testkube get testsuite
+        testkube get testsuiteexecution
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           result=$(jq -r '.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
           echo "Test-suite $test result: $result"
         done
         
+        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube
+        
+        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name"
+        
+        kubectl get testworkflowexecutions.testworkflows.testkube.io -n testkube -o yaml
+        
+        testkube get testworkflow
+        testkube get testworkflowexecution
         for test in $(kubectl get testworkflows.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           result=$(jq -r '.result.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
           echo "Test-workflow $test result: $result"
