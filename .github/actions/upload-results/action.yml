@@ -1,5 +1,5 @@
 name: Upload results
-description: Upload results from tests and test-suites as artifact
+description: Upload results from tests as artifact
 
 runs:
   using: "composite"
@@ -17,6 +17,10 @@ runs:
         
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
           testkube get execution $test-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json
+        done
+        
+        for testworkflow in $(kubectl get testworkflows.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          testkube get testworkflowexecution $testworkflow-$RUN_ID-$JOB_ID --output json > ${{ github.workspace }}/test-results/$testworkflow-$RUN_ID-$JOB_ID.json
         done
 
     - name: Upload test results as artifact

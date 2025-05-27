@@ -37,8 +37,9 @@ env:
   TK_HELM_VERSION: ${{ fromJson(inputs.configuration).testkube.helm_version }}
   TK_AGENT_VERSION: ${{ fromJson(inputs.configuration).testkube.agent_version }}
   TEAMS_INCOMING_WEBHOOK_URL: ${{ secrets.TEAMS_INCOMING_WEBHOOK_URL }}
-  RUN_TESTS: ${{ fromJson(inputs.configuration).testkube.run-tests || 'true' }}
+  RUN_TESTS: ${{ fromJson(inputs.configuration).testkube.run-tests || 'false' }}
   RUN_TEST_SUITES: ${{ fromJson(inputs.configuration).testkube.run-test-suites || 'false' }}
+  RUN_TEST_WORKFLOWS: ${{ fromJson(inputs.configuration).testkube.run-test-workflows || 'true' }}
   SEND_NOTIFICATION: ${{ fromJson(inputs.configuration).notifications.enabled || 'false' }}
   NOTIFICATION_CHANNEL: ${{ fromJson(inputs.configuration).notifications.channel || 'teams' }}
 
@@ -119,6 +120,10 @@ jobs:
         with:
           dist: ${{ env.K8S_CLUSTER_DIST }}
 
+      # Deploy Sealed Secrets
+      - name: Deploy Sealed Secrets
+        uses: ./.github/actions/deploy-sealed-secrets
+
       # Deploy CZERTAINLY
       - name: Deploy CZERTAINLY version ${{ env.CZERTAINLY_VERSION }}
         uses: ./.github/actions/deploy-czertainly
@@ -136,6 +141,11 @@ jobs:
       - name: Run test-suites
         if: env.RUN_TEST_SUITES == 'true'
         uses: ./.github/actions/run-test-suites
+
+      # Create Testkube CRDs and run testworkflows
+      - name: Run testworkflows
+        if: env.RUN_TEST_WORKFLOWS == 'true'
+        uses: ./.github/actions/run-testworkflows
 
       # Upload test results as artifact
       - name: Upload test results as artifact

@@ -1,0 +1,24 @@
+name: Run tests
+description: Apply Testkube CRDs and run all testworkflows
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Create Testkube CRDs
+      shell: bash
+      run: |
+        kubectl apply -f $TEST_FOLDER_PATH/tests/testworkflow --recursive
+
+    - name: Run all testworkflows
+      shell: bash
+      run: |
+        for testworkflow in $(kubectl get testworkflows.testworkflows.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
+          testkube run testworkflow $testworkflow --name $testworkflow-$RUN_ID-$JOB_ID
+        done
+
+    - name: Wait for testworkflows to finish
+      shell: bash
+      run: |
+        kubectl -n testkube wait job --all --for=condition=Complete --timeout=600s
