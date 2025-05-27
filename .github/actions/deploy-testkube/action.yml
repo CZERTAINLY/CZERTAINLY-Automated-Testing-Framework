@@ -19,6 +19,9 @@ runs:
           --namespace testkube --version $TK_HELM_VERSION --timeout 600s
 
         kubectl describe pods -n testkube -l app.kubernetes.io/name=api-server
+        
+        echo "Waiting for the testkube-api to be ready"
+        kubectl -n testkube wait --for=condition=ready pod -l app.kubernetes.io/name=api-server --timeout=300s
 
     - name: Setup Testkube CLI
       if: env.TK_SUBSCRIPTION == 'free'
