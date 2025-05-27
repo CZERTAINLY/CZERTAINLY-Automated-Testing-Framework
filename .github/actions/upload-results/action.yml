@@ -34,7 +34,6 @@ runs:
         for id in $(testkube get testworkflowexecution --output json | jq -r '.[].id'); do
           testkube get testworkflowexecution $id --output pretty > ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.pretty
           testkube get testworkflowexecution $id --output json > ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.json
-          testkube download artifacts $id
         done
 
     - name: Upload test results as artifact
@@ -43,8 +42,8 @@ runs:
         name: test-results
         path: ${{ github.workspace }}/test-results
 
-    - name: Upload test artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-artifacts
-        path: ${{ github.workspace }}/artifacts
+#    - name: Upload test artifacts
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: test-artifacts
+#        path: ${{ github.workspace }}/artifacts

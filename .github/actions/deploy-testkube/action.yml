@@ -22,6 +22,8 @@ runs:
         
         echo "Waiting for the testkube-api to be ready"
         kubectl -n testkube wait --for=condition=ready pod -l app.kubernetes.io/name=api-server --timeout=300s
+        
+        kubectl -n testkube get all -o wide
 
     - name: Setup Testkube CLI
       if: env.TK_SUBSCRIPTION == 'free'
