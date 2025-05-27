@@ -32,6 +32,7 @@ runs:
         echo "Test workflow executions:"
         testkube get testworkflowexecution
         for id in $(testkube get testworkflowexecution --output json | jq -r '.[].id'); do
+          testkube get testworkflowexecution $id --output pretty > ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.pretty
           testkube get testworkflowexecution $id --output json > ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.json
         done
 

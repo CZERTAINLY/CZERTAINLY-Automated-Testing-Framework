@@ -110,6 +110,10 @@ jobs:
       - name: Initialize data
         uses: ./.github/actions/initialize-data
 
+      - name: Add hosts to /etc/hosts
+        run: |
+          sudo echo "127.0.0.1 czertainly.local" | sudo tee -a /etc/hosts
+
       # Set up Helm
       - name: Set up Helm
         uses: azure/setup-helm@v3
