@@ -17,3 +17,40 @@ runs:
         mkdir -p ${{ github.workspace }}/.kube
         sudo microk8s config > ${{ github.workspace }}/.kube/config
         sudo chown -R runner: ${{ github.workspace }}/.kube
+
+    - name: Create internal ingress service
+      shell: bash
+      run: |
+        microk8s kubectl apply -n ingress -f - <<'EOF'
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ingress-nginx-controller
+          namespace: ingress
+        spec:
+          type: ClusterIP
+          selector:
+            name: nginx-ingress-microk8s
+          ports:
+            - name: http
+              port: 80
+              targetPort: 80
+            - name: https
+              port: 443
+              targetPort: 443
+        EOF
+        
+        kubectl -n ingress get all -o wide
+
+    - name: Make czertainly.local resolvable inside the cluster
+      shell: bash
+      run: |
+        kubectl -n kube-system rollout status deployment/coredns --timeout=120s
+        kubectl -n kube-system get configmap coredns -o jsonpath='{.data.Corefile}' > Corefile
+
+        grep -q 'czertainly\.local' Corefile && { echo "✔ rewrite already in place"; exit 0; }
+        sed -i '/^[[:space:]]*ready/a\    rewrite name czertainly.local ingress-nginx-controller.ingress.svc.cluster.local' Corefile
+        kubectl -n kube-system create configmap coredns --from-file=Corefile=Corefile --dry-run=client -o yaml | kubectl apply -f -
+
+        kubectl -n kube-system rollout restart deployment/coredns
+        kubectl -n kube-system rollout status deploy/coredns --timeout=60s
