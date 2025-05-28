@@ -42,3 +42,17 @@ runs:
               $TEAMS_INCOMING_WEBHOOK_URL
           fi
         done
+        
+        for id in $(testkube get testworkflowexecution --output json | jq -r '.[].id'); do
+          if [[ $(jq -r '.result.status' ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
+            export EXECUTION_ID=$id
+            export TEST_LABELS="test-workflow"
+            export TEST_TYPE="test-workflow"
+            export TEST_NAME=$(jq -r '.name' ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.json)
+        
+            envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
+            curl -X POST --silent \
+              -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
+              $TEAMS_INCOMING_WEBHOOK_URL
+          fi
+        done
