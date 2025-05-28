@@ -74,6 +74,21 @@ registerAdmin:
       -----END CERTIFICATE-----
   source: external
 
+image:
+  tag: develop-latest
+
+authService:
+  image:
+    tag: develop-latest
+
+authOpaPolicies:
+  image:
+    tag: develop-latest
+
+schedulerService:
+  image:
+    tag: develop-latest
+
 ingress:
   enabled: true
   certificate:
