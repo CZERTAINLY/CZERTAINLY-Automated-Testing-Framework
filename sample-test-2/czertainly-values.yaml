@@ -86,3 +86,7 @@ ingress:
 
 apiGateway:
   trustedIps: '0.0.0.0/0,::/0'
+
+feAdministrator:
+  image:
+    tag: develop-latest
