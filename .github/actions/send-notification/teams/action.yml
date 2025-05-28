@@ -15,44 +15,51 @@ runs:
     - name: Notify about failed tests in Teams
       shell: bash
       run: |
-        for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          if [[ $(jq -r '.executionResult.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
-            export EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
-            export TEST_LABELS=$(jq '.labels' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json | sed 's/$/\\n/g' | tr -d '\n' | sed 's/"/\\"/g')
-            export TEST_TYPE=$(jq -r '.testType' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
-            export TEST_NAME="$test"
+        send_notification() {
+          envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
+          curl -X POST --silent \
+            -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
+            $TEAMS_INCOMING_WEBHOOK_URL
+        }
         
-            envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
-            curl -X POST --silent \
-              -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
-              $TEAMS_INCOMING_WEBHOOK_URL
+        for test in $(kubectl get tests.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name"); do
+          result_file="${{ github.workspace }}/test-results/${test}-${RUN_ID}-${JOB_ID}.json"
+          status=$(jq -r '.executionResult.status' "$result_file")
+
+          if [[ "$status" != "passed" || ( "$REPORT_SUCCESS" == "true" && "$status" == "passed" ) ]]; then
+            export EXECUTION_ID=$(jq -r '.id' "$result_file")
+            export TEST_LABELS=$(jq '.labels' "$result_file" | sed 's/$/\\n/g' | tr -d '\n' | sed 's/"/\\"/g')
+            export TEST_TYPE=$(jq -r '.testType' "$result_file")
+            export TEST_NAME="$test"
+  
+            send_notification
           fi
         done
-        
+  
         for test in $(kubectl get testsuite.tests.testkube.io -n testkube --no-headers -o custom-columns=":metadata.name") ; do
-          if [[ $(jq -r '.status' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
-            export EXECUTION_ID=$(jq -r '.id' ${{ github.workspace }}/test-results/$test-$RUN_ID-$JOB_ID.json)
+          result_file="${{ github.workspace }}/test-results/${test}-${RUN_ID}-${JOB_ID}.json"
+          status=$(jq -r '.status' "$result_file")
+        
+          if [[ "$status" != "passed" || ( "$REPORT_SUCCESS" == "true" && "$status" == "passed" ) ]]; then
+            export EXECUTION_ID=$(jq -r '.id' "$result_file")
             export TEST_LABELS="test-suite"
             export TEST_TYPE="test-suite"
             export TEST_NAME="$test"
         
-            envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
-            curl -X POST --silent \
-              -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
-              $TEAMS_INCOMING_WEBHOOK_URL
+            send_notification
           fi
         done
         
         for id in $(testkube get testworkflowexecution --output json | jq -r '.[].id'); do
-          if [[ $(jq -r '.result.status' ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.json) != "passed" ]]; then
-            export EXECUTION_ID=$id
+          result_file="${{ github.workspace }}/test-results/${id}-${RUN_ID}-${JOB_ID}.json"
+          status=$(jq -r '.result.status' "$result_file")
+        
+          if [[ "$status" != "passed" || ( "$REPORT_SUCCESS" == "true" && "$status" == "passed" ) ]]; then
+            export EXECUTION_ID="$id"
             export TEST_LABELS="test-workflow"
             export TEST_TYPE="test-workflow"
-            export TEST_NAME=$(jq -r '.name' ${{ github.workspace }}/test-results/$id-$RUN_ID-$JOB_ID.json)
+            export TEST_NAME=$(jq -r '.name' "$result_file")
         
-            envsubst < ${{ github.workspace }}/adaptive_card_template.json > ${{ github.workspace }}/adaptive_card.json
-            curl -X POST --silent \
-              -H "Content-Type: application/json" -d @${{ github.workspace }}/adaptive_card.json \
-              $TEAMS_INCOMING_WEBHOOK_URL
+            send_notification
           fi
         done

@@ -41,6 +41,7 @@ env:
   RUN_TEST_SUITES: ${{ fromJson(inputs.configuration).testkube.run-test-suites || 'false' }}
   RUN_TEST_WORKFLOWS: ${{ fromJson(inputs.configuration).testkube.run-test-workflows || 'true' }}
   SEND_NOTIFICATION: ${{ fromJson(inputs.configuration).notifications.enabled || 'false' }}
+  REPORT_SUCCESS: ${{ fromJson(inputs.configuration).notifications.report_success || 'false' }}
   NOTIFICATION_CHANNEL: ${{ fromJson(inputs.configuration).notifications.channel || 'teams' }}
   SEALED_SECRETS_KEY: ${{ secrets.SEALED_SECRETS_KEY }}
   SEALED_SECRETS_CERT: ${{ secrets.SEALED_SECRETS_CERT }}
@@ -164,7 +165,7 @@ jobs:
         uses: ./.github/actions/upload-results
 
       # Notify about failed tests through configured channel
-      - name: Notify about failed tests
+      - name: Notify about test results
         if: env.SEND_NOTIFICATION == 'true'
         uses: ./.github/actions/send-notification
         with:

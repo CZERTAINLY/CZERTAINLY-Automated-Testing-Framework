@@ -29,6 +29,7 @@
     "run-test-workflows": true
   },
   "notifications": {
-    "enabled": true
+    "enabled": true,
+    "report_success": true
   }
 }
