@@ -22,8 +22,8 @@
   },
   "testkube": {
     "subscription": "free",
-    "helm_version": "2.1.173",
-    "agent_version": "2.1.152",
+    "helm_version": "2.1.243",
+    "agent_version": "2.1.154",
     "run-tests": false,
     "run-test-suites": false,
     "run-test-workflows": true
