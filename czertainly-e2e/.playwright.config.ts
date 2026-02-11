@@ -11,7 +11,11 @@ export default defineConfig({
     timeout: 10_000,
   },
 
-  reporter: [['line'], ['html', { open: 'never' }]],
+  reporter: [
+    ['line'],
+    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+    ['junit', { outputFile: 'test-results/junit.xml' }],
+  ],
 
   use: {
     baseURL: process.env.BASE_URL,
