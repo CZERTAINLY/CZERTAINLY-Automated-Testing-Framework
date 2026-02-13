@@ -6,7 +6,7 @@ test.describe('@smoke navigation', () => {
   test('SMK-002: key pages load without critical crashes', async ({ page, env }) => {
     const serverErrors: string[] = [];
 
-    const onResponse = async (response: any) => {
+    const onResponse = (response: any) => {
       const request = response.request();
       const resourceType = request.resourceType();
       const status = response.status();
