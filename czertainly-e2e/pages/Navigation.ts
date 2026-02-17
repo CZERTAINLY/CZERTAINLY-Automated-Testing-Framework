@@ -1,7 +1,7 @@
 import { Locator, Page, expect } from '@playwright/test';
 
 export class Navigation {
-  private readonly sidebarNav;
+  private readonly sidebarNav: Locator;
   private hasToggledSidebar = false;
 
   constructor(private readonly page: Page) {
