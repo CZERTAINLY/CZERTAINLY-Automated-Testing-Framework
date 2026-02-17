@@ -99,17 +99,27 @@ function createTagged5xxCollector(page: Page) {
       const start = Date.now();
       let idleStart: number | null = null;
 
-      while (Date.now() - start < timeoutMs) {
-        const pending = pendingByTag.get(tag) ?? 0;
+      try {
+        await expect
+          .poll(
+            () => {
+              const pending = pendingByTag.get(tag) ?? 0;
 
-        if (pending === 0) {
-          if (idleStart === null) idleStart = Date.now();
-          if (Date.now() - idleStart >= idleMs) return;
-        } else {
-          idleStart = null;
-        }
+              if (pending === 0) {
+                if (idleStart === null) idleStart = Date.now();
+                if (Date.now() - idleStart >= idleMs) return true;
+              } else {
+                idleStart = null;
+              }
 
-        await page.waitForTimeout(pollMs);
+              if (Date.now() - start >= timeoutMs) return true;
+              return false;
+            },
+            { timeout: timeoutMs, intervals: [pollMs] }
+          )
+          .toBeTruthy();
+      } catch {
+        return;
       }
     },
 
