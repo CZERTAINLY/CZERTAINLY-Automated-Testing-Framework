@@ -19,9 +19,9 @@ export class LoginPage {
   private async loginLocal(): Promise<void> {
     const providerName = this.env.localAuthProviderName ?? 'Internal2';
     const internal2 = this.page.locator(`text=${providerName}`);
-    const usernameInput = this.page.locator('#username');
-    const passwordInput = this.page.locator('#password');
-    const submitBtn = this.page.locator('input[type="submit"]');
+    const usernameInput = this.page.getByRole('textbox', { name: 'Username' });
+    const passwordInput = this.page.getByRole('textbox', { name: 'Password' });
+    const submitBtn = this.page.getByRole('button', { name: /sign in/i });
 
     await expect(internal2).toBeVisible();
     await internal2.click();
@@ -32,23 +32,4 @@ export class LoginPage {
 
     await expect(this.page.getByTestId('sidebar-sticky')).toBeVisible();
   }
-
-  // private async loginOidc(): Promise<void> {
-  //   await this.page.waitForLoadState('domcontentloaded');
-
-  //   const usernameByLabel = this.page.getByLabel(process.env.OIDC_USERNAME_LABEL ?? 'Username');
-  //   const passwordByLabel = this.page.getByLabel(process.env.OIDC_PASSWORD_LABEL ?? 'Password');
-
-  //   await expect(usernameByLabel).toBeVisible();
-  //   await usernameByLabel.fill(this.env.username);
-  //   await passwordByLabel.fill(this.env.password);
-
-  //   const signInButton =
-  //     this.page.getByRole('button', { name: /sign in|log in|continue/i });
-
-  //   await signInButton.click();
-
-  //   await expect(this.page).toHaveURL(/.*\/(dashboard)?/);
-  //   await expect(this.page.getByTestId('sidebar-sticky')).toBeVisible();
-  // }
 }
