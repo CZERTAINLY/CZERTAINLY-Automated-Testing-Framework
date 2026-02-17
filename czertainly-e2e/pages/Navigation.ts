@@ -25,7 +25,8 @@ export class Navigation {
   }
 
   private async ensureParentExpanded(parentButton: Locator): Promise<void> {
-    const parentList = parentButton.locator('xpath=following-sibling::ul[1]');
+    const parentContainer = parentButton.locator('..');
+    const parentList = parentContainer.locator('ul').first();
 
     if ((await parentList.count()) === 0) {
       await parentButton.click();
