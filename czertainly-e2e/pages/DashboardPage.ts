@@ -1,11 +1,11 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class DashboardPage {
-    readonly sidebarNav;
-    readonly topTiles;
-    readonly bottomTiles;
-    readonly header;
-    readonly footer;
+    readonly sidebarNav: Locator;
+    readonly topTiles: Locator;
+    readonly bottomTiles: Locator;
+    readonly header: Locator;
+    readonly footer: Locator;
 
     constructor(private readonly page: Page) {
         this.sidebarNav = this.page.getByTestId('sidebar-sticky');
