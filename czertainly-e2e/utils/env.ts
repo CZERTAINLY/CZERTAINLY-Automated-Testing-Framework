@@ -26,7 +26,7 @@ function required(name: string): string {
 export function loadEnv(): TestEnv {
   const authMode = (process.env.AUTH_MODE ?? 'local') as AuthMode;
   if (authMode !== 'local' && authMode !== 'oidc') {
-    throw new Error(`AUTH_MODE must be "local" or "oidc", got: ${process.env.AUTH_MODE}`);
+    throw new Error(`AUTH_MODE must be either 'local' or 'oidc', but got: ${process.env.AUTH_MODE}`);
   }
 
   return {
