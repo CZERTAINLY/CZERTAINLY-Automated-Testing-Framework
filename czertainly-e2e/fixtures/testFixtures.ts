@@ -11,14 +11,6 @@ export const test = base.extend<{
   },
 });
 
-// test.afterEach(async ({ context }) => {
-//   await context.close();
-// });
-
-// test.afterAll(async ({ browser }) => {
-//   await browser.close();
-// });
-
 export { expect } from '@playwright/test';
 
 export async function loginAsSmokeUser(page: Page, env: TestEnv): Promise<void> {
