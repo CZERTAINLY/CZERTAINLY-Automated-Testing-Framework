@@ -17,7 +17,8 @@ export class LoginPage {
   }
 
   private async loginLocal(): Promise<void> {
-    const internal2 = this.page.locator('text=Internal2');
+    const providerName = this.env.localAuthProviderName ?? 'Internal2';
+    const internal2 = this.page.locator(`text=${providerName}`);
     const usernameInput = this.page.locator('#username');
     const passwordInput = this.page.locator('#password');
     const submitBtn = this.page.locator('input[type="submit"]');

@@ -9,6 +9,8 @@ export type TestEnv = {
   username: string;
   password: string;
 
+  localAuthProviderName?: string;
+
   discoveryProviderName?: string;
   discoveryTarget?: string;
 };
@@ -32,6 +34,7 @@ export function loadEnv(): TestEnv {
     authMode,
     username: required('SMOKE_USERNAME'),
     password: required('SMOKE_PASSWORD'),
+    localAuthProviderName: process.env.LOCAL_AUTH_PROVIDER_NAME,
     discoveryProviderName: process.env.DISCOVERY_PROVIDER_NAME,
     discoveryTarget: process.env.DISCOVERY_TARGET,
   };
