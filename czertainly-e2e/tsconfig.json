@@ -16,6 +16,6 @@
     "fixtures",
     "pages",
     "utils",
-    ".playwright.config.ts"
+    "playwright.config.ts"
   ]
 }
