@@ -31,8 +31,8 @@ test.describe('@smoke discovery', () => {
   test('SMK-003: network discovery and certificate details', async ({ page, request, env }) => {
     test.setTimeout(360000);
     test.skip(
-      (!env.discoveryProviderName && !env.discoveryProviderUrl) || !env.discoveryTarget,
-      'Either DISCOVERY_PROVIDER_NAME or DISCOVERY_PROVIDER_URL, and DISCOVERY_TARGET are required.'
+      !env.discoveryProviderName || !env.discoveryTarget,
+      'DISCOVERY_PROVIDER_NAME and DISCOVERY_TARGET are required.'
     );
 
     // --- Step 0: Find existing Connector (Pre-condition) ---
@@ -82,15 +82,16 @@ test.describe('@smoke discovery', () => {
       const main = page.locator('main');
       await expect(main).toBeVisible();
 
+      const providerRow = main.getByRole('row', { name: env.discoveryProviderName! }).first();
+
       const searchInput = main.locator('input[placeholder="Search"], input#search').first();
       if (await searchInput.isVisible()) {
         await searchInput.fill(env.discoveryProviderName!);
         await searchInput.press('Enter');
         await expect(async () => {
+          await expect(providerRow).toBeVisible();
         }).toPass();
       }
-
-      const providerRow = main.getByRole('row', { name: env.discoveryProviderName! }).first();
       await expect(providerRow, `Provider "${env.discoveryProviderName}" should be visible in Connectors list`).toBeVisible();
 
       await expect(providerRow).toContainText(/connected/i);

@@ -1,4 +1,4 @@
-import { test as base, Page, APIRequestContext, Browser, request as playwrightRequest, expect } from '@playwright/test';
+import { test as base, Page, APIRequestContext, request as playwrightRequest, expect } from '@playwright/test';
 import { loadEnv, TestEnv } from '../utils/env';
 import { LoginPage } from '../pages/LoginPage';
 import { Logger } from '../utils/Logger';
@@ -14,6 +14,11 @@ export { expect };
 export async function getAuthenticatedApiContext(request: APIRequestContext, env: TestEnv): Promise<APIRequestContext> {
   const authBase = env.authBaseUrl ? env.authBaseUrl.replace(/\/$/, '') : `${env.baseUrl.replace(/\/$/, '')}/kc`;
   const tokenUrl = `${authBase}/realms/${env.authRealm}/protocol/openid-connect/token`;
+
+  if (!env.clientSecret) {
+    logger.error('SMOKE_CLIENT_SECRET is missing, but it is required for API authentication via Keycloak.');
+    throw new Error('SMOKE_CLIENT_SECRET is missing, but it is required for API authentication via Keycloak.');
+  }
 
   logger.debug(`Fetching access token from: ${tokenUrl} for user: ${env.username}`);
 

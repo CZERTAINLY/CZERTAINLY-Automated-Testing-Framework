@@ -5,9 +5,10 @@
 - AUTH_MODE: "local" or "oidc".
 - SMOKE_USERNAME / SMOKE_PASSWORD: Smoke user credentials.
 
-## Recommended for stable smoke (later)
+## Required for Network Discovery (SMK-003)
 - DISCOVERY_PROVIDER_NAME: A stable Discovery Provider available in every env.
 - DISCOVERY_TARGET: A stable discovery target (preferably an internal TLS test service) injected via env vars.
+- DISCOVERY_PROVIDER_URL: URL of the Discovery Connector.
 
 ## Notes
 - No environment URLs, credentials, or internal targets must be committed to the repo.

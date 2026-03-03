@@ -147,9 +147,9 @@ export class DiscoveryPage {
         }, "Wait for certificate rows").toPass();
 
         const headers = this.certificateTable.locator('thead tr th');
-        for (const h of DEF_CERTIFICATE_TABLE_HEADERS) {
-            await expect(headers, `Header should contain ${h}`).toContainText([new RegExp(h, 'i')]);
-        }
+        await expect(headers, 'Headers should match expected certificate table headers').toContainText(
+            DEF_CERTIFICATE_TABLE_HEADERS.map((h) => new RegExp(h, 'i')),
+        );
 
         const firstRow = rows.first();
         await expect(firstRow.locator('td').nth(0)).not.toBeEmpty();

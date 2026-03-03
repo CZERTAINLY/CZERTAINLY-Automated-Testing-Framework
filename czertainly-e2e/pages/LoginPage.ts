@@ -8,7 +8,7 @@ export class LoginPage {
   constructor(private readonly page: Page, private readonly env: TestEnv) { }
 
   async goto(): Promise<void> {
-    await this.page.goto(this.env.baseUrl + 'administrator/');
+    await this.page.goto(new URL('administrator/', this.env.baseUrl).toString());
   }
 
   async login(): Promise<void> {
