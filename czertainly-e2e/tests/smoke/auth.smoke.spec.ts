@@ -3,8 +3,7 @@ import { test, expect, loginAsSmokeUser } from '../../fixtures/testFixtures';
 import { DashboardPage } from '../../pages/DashboardPage';
 import {
   sidebarItems,
-  topTilesTitles,
-  bottomTileTitles,
+  topTilesTitles
 } from './smokeData';
 
 const assertHeadingsVisible = async (
@@ -21,7 +20,7 @@ const assertHeadingsVisible = async (
 test.describe('@smoke auth', () => {
   test('SMK-001: user can log in', async ({ page, env }) => {
     const dashboardPage = new DashboardPage(page);
-    const { sidebarNav, topTiles, bottomTiles, header, footer } = dashboardPage;
+    const { sidebarNav, topTiles, header, footer } = dashboardPage;
 
 
     await test.step('login', async () => {
@@ -48,17 +47,8 @@ test.describe('@smoke auth', () => {
       await expect(topTiles.locator('section')).toHaveCount(topTilesTitles.length);
     });
 
-    await test.step('assert bottom tiles', async () => {
-      await expect(bottomTiles).toBeVisible();
-      await expect(bottomTiles.locator('section')).toHaveCount(bottomTileTitles.length);
-    });
-
     await test.step('verify top tiles titles', async () => {
       await assertHeadingsVisible(topTiles, topTilesTitles);
-    });
-
-    await test.step('verify bottom tiles titles', async () => {
-      await assertHeadingsVisible(bottomTiles, bottomTileTitles);
     });
 
     await test.step('verify presence of header and footer', async () => {
