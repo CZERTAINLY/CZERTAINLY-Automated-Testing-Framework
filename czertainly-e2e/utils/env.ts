@@ -8,10 +8,13 @@ export type TestEnv = {
   authMode: AuthMode;
   username: string;
   password: string;
-
-  localAuthProviderName?: string;
-
+  clientSecret?: string;
+  authClientId: string;
+  authRealm: string;
+  authBaseUrl?: string;
+  localAuthProviderName: string;
   discoveryProviderName?: string;
+  discoveryProviderUrl?: string;
   discoveryTarget?: string;
 };
 
@@ -34,7 +37,12 @@ export function loadEnv(): TestEnv {
     authMode,
     username: required('SMOKE_USERNAME'),
     password: required('SMOKE_PASSWORD'),
-    localAuthProviderName: process.env.LOCAL_AUTH_PROVIDER_NAME,
+    clientSecret: process.env.SMOKE_CLIENT_SECRET,
+    authClientId: process.env.AUTH_CLIENT_ID || 'czertainly',
+    authRealm: process.env.AUTH_REALM || 'CZERTAINLY',
+    authBaseUrl: process.env.AUTH_BASE_URL, // Defaults to baseUrl/kc if not set
+    localAuthProviderName: required('LOCAL_AUTH_PROVIDER_NAME'),
+    discoveryProviderUrl: process.env.DISCOVERY_PROVIDER_URL,
     discoveryProviderName: process.env.DISCOVERY_PROVIDER_NAME,
     discoveryTarget: process.env.DISCOVERY_TARGET,
   };
