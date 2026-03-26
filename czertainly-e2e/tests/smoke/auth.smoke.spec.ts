@@ -37,7 +37,7 @@ test.describe('@smoke auth', () => {
 
       for (const item of sidebarItems) {
         await expect(
-          sidebarNav.getByRole(item.role, { name: item.name })
+          sidebarNav.getByRole(item.role, { name: item.name, exact: true })
         ).toBeVisible();
       }
     });
