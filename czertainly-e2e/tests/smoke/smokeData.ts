@@ -12,7 +12,14 @@ export type NavigableSidebarItem = {
 };
 
 export const sidebarItems: readonly SidebarItem[] = [
-    { role: 'link', name: 'Dashboard', urlHint: /dashboard/i },
+    {
+        role: 'button',
+        name: 'Dashboard',
+        children: [
+            { role: 'link', name: 'Certificates Dashboard', urlHint: /\/dashboard\/certificates/i },
+            { role: 'link', name: 'Secrets Dashboard', urlHint: /\/dashboard\/secrets/i },
+        ],
+    },
     { role: 'link', name: 'Certificates', urlHint: /\/certificates/i },
     { role: 'link', name: 'Keys', urlHint: /keys/i },
     { role: 'link', name: 'Discoveries', urlHint: /discoveries/i },
