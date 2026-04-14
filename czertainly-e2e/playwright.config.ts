@@ -25,6 +25,8 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL,
 
+    actionTimeout: 15_000,
+
     screenshot: 'only-on-failure',
 
     video: 'retain-on-failure',
