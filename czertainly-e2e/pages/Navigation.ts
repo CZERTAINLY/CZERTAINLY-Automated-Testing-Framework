@@ -20,6 +20,7 @@ export class Navigation {
 
     if (await expandButton.isVisible()) {
       await expandButton.click();
+      await this.page.waitForTimeout(400);
       this.hasToggledSidebar = true;
     }
   }

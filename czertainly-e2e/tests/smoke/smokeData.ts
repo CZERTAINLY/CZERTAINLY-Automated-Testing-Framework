@@ -24,6 +24,8 @@ export const sidebarItems: readonly SidebarItem[] = [
     { role: 'link', name: 'Keys', urlHint: /keys/i },
     { role: 'link', name: 'Discoveries', urlHint: /discoveries/i },
     { role: 'link', name: 'Connectors', urlHint: /connectors/i },
+    { role: 'link', name: 'Secrets', urlHint: /\/secrets/i },
+    { role: 'link', name: 'CBOMs', urlHint: /\/cboms/i },
     {
         role: 'button',
         name: 'Access Control',
@@ -40,6 +42,7 @@ export const sidebarItems: readonly SidebarItem[] = [
             { role: 'link', name: 'Token Profiles', urlHint: /tokenprofiles/i },
             { role: 'link', name: 'Compliance Profiles', urlHint: /complianceprofiles/i },
             { role: 'link', name: 'Notification Profiles', urlHint: /notificationprofiles/i },
+            { role: 'link', name: 'Vault Profiles', urlHint: /vaultprofiles/i },
         ],
     },
     {
@@ -52,6 +55,7 @@ export const sidebarItems: readonly SidebarItem[] = [
             { role: 'link', name: 'Groups', urlHint: /groups/i },
             { role: 'link', name: 'Entities', urlHint: /entities/i },
             { role: 'link', name: 'Locations', urlHint: /locations/i },
+            { role: 'link', name: 'Vaults', urlHint: /\/vaults/i },
         ],
     },
     {
