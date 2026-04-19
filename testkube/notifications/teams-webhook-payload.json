@@ -10,37 +10,118 @@
         "version": "1.6",
         "body": [
           {
+            "type": "ColumnSet",
+            "columns": [
+              {
+                "type": "Column",
+                "width": "auto",
+                "items": [
+                  {
+                    "type": "Icon",
+                    "name": "{{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}CheckmarkCircle{{ else }}DismissCircle{{ end }}",
+                    "color": "{{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}Good{{ else }}Attention{{ end }}",
+                    "style": "Filled",
+                    "size": "Large"
+                  }
+                ],
+                "verticalContentAlignment": "Center"
+              },
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "{{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}PASSED{{ else }}FAILED{{ end }}",
+                    "weight": "Bolder",
+                    "size": "Large",
+                    "color": "{{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}Good{{ else }}Attention{{ end }}"
+                  },
+                  {
+                    "type": "TextBlock",
+                    "text": "{{ .TestWorkflowExecution.Workflow.Name }}",
+                    "spacing": "None",
+                    "isSubtle": true
+                  }
+                ],
+                "verticalContentAlignment": "Center"
+              }
+            ]
+          },
+          {
             "type": "Container",
-            "style": "{{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}good{{ else }}attention{{ end }}",
+            "style": "emphasis",
+            "spacing": "Medium",
             "items": [
               {
-                "type": "TextBlock",
-                "text": "{{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}✅ PASSED{{ else }}🚨 FAILED{{ end }}",
-                "wrap": true,
-                "style": "heading",
-                "weight": "Bolder"
-              },
-              {
-                "type": "FactSet",
-                "facts": [
-                  { "title": "Workflow:", "value": "{{ .TestWorkflowExecution.Workflow.Name }}" },
-                  { "title": "Run #:", "value": "{{ .TestWorkflowExecution.Number }}" },
-                  { "title": "Duration:", "value": "{{ .TestWorkflowExecution.Result.Duration }}" },
-                  { "title": "Total tests:", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Tests }}" },
-                  { "title": "Passed:", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Passed }}" },
-                  { "title": "Failed:", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Failed }}" },
-                  { "title": "Skipped:", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Skipped }}" }
-                ]
-              },
-              {
-                "type": "ActionSet",
-                "actions": [
+                "type": "ColumnSet",
+                "columns": [
                   {
-                    "type": "Action.OpenUrl",
-                    "title": "Open in Testkube",
-                    "url": "{{ .ExecutionURL }}"
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                      { "type": "TextBlock", "text": "Run #", "isSubtle": true, "size": "Small" },
+                      { "type": "TextBlock", "text": "{{ .TestWorkflowExecution.Number }}", "weight": "Bolder", "spacing": "None" }
+                    ]
+                  },
+                  {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                      { "type": "TextBlock", "text": "Duration", "isSubtle": true, "size": "Small" },
+                      { "type": "TextBlock", "text": "{{ .TestWorkflowExecution.Result.Duration }}", "weight": "Bolder", "spacing": "None" }
+                    ]
+                  },
+                  {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                      { "type": "TextBlock", "text": "Total", "isSubtle": true, "size": "Small" },
+                      { "type": "TextBlock", "text": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Tests }}", "weight": "Bolder", "spacing": "None" }
+                    ]
                   }
                 ]
+              },
+              {
+                "type": "ColumnSet",
+                "spacing": "Small",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                      { "type": "TextBlock", "text": "✅ Passed", "isSubtle": true, "size": "Small" },
+                      { "type": "TextBlock", "text": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Passed }}", "weight": "Bolder", "color": "Good", "spacing": "None" }
+                    ]
+                  },
+                  {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                      { "type": "TextBlock", "text": "❌ Failed", "isSubtle": true, "size": "Small" },
+                      { "type": "TextBlock", "text": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Failed }}", "weight": "Bolder", "color": "Attention", "spacing": "None" }
+                    ]
+                  },
+                  {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                      { "type": "TextBlock", "text": "⏭️ Skipped", "isSubtle": true, "size": "Small" },
+                      { "type": "TextBlock", "text": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Skipped }}", "weight": "Bolder", "spacing": "None" }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.OpenUrl",
+                "title": "Open in Testkube",
+                "url": "{{ .ExecutionURL }}",
+                "iconUrl": "icon:ArrowUpRight"
               }
             ]
           }
