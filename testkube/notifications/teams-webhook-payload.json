@@ -1,0 +1,51 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "contentUrl": null,
+      "content": {
+        "type": "AdaptiveCard",
+        "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+        "version": "1.6",
+        "body": [
+          {
+            "type": "Container",
+            "style": "{{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}good{{ else }}attention{{ end }}",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "{{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}✅ PASSED{{ else }}🚨 FAILED{{ end }}",
+                "wrap": true,
+                "style": "heading",
+                "weight": "Bolder"
+              },
+              {
+                "type": "FactSet",
+                "facts": [
+                  { "title": "Workflow:", "value": "{{ .TestWorkflowExecution.Workflow.Name }}" },
+                  { "title": "Run #:", "value": "{{ .TestWorkflowExecution.Number }}" },
+                  { "title": "Duration:", "value": "{{ .TestWorkflowExecution.Result.Duration }}" },
+                  { "title": "Total tests:", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Tests }}" },
+                  { "title": "Passed:", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Passed }}" },
+                  { "title": "Failed:", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Failed }}" },
+                  { "title": "Skipped:", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Skipped }}" }
+                ]
+              },
+              {
+                "type": "ActionSet",
+                "actions": [
+                  {
+                    "type": "Action.OpenUrl",
+                    "title": "Open in Testkube",
+                    "url": "{{ .ExecutionURL }}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
