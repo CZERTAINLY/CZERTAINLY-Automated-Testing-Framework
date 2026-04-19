@@ -1,0 +1,19 @@
+{
+  "username": "Testkube QA Automation",
+  "content": "**Workflow:**: `{{ .TestWorkflowExecution.Workflow.Name }}`",
+  "embeds": [
+    {
+      "title": "Smoke result: {{ .TestWorkflowExecution.Result.Status | testworkflowstatustostring }}",
+      "url": "{{ .ExecutionURL }}",
+      "color": {{ if eq (.TestWorkflowExecution.Result.Status | testworkflowstatustostring) "passed" }}65280{{ else }}16711680{{ end }},
+      "fields": [
+        { "name": "Run #:", "value": "`{{ .TestWorkflowExecution.Number }}` ", "inline": true},
+        { "name": "Duration", "value": "{{ .TestWorkflowExecution.Result.Duration }}", "inline": true},
+        { "name": "Total tests", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Tests }}", "inline": true},
+        { "name": "Passed", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Passed }}", "inline": true},
+        { "name": "Failed", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Failed }}", "inline": true},
+        { "name": "Skipped", "value": "{{ (index .TestWorkflowExecution.Reports 0).Summary.Skipped }}", "inline": true}
+      ]
+    }
+  ]
+}
