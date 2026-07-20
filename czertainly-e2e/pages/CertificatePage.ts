@@ -27,6 +27,7 @@ export class CertificatePage {
     readonly addCertificateButton: Locator;
 
     // Issue page (separate URL: /certificates/add, not a modal)
+    readonly requestTypeIssue: Locator;
     readonly raProfileTrigger: Locator;
     readonly keySourceTrigger: Locator;
     readonly csrTextarea: Locator;
@@ -42,8 +43,9 @@ export class CertificatePage {
         this.main = page.locator('main');
         this.addCertificateButton = this.main.getByTestId('add-certificate-button');
 
+        this.requestTypeIssue = this.main.getByTestId('requestType-issue');
         this.raProfileTrigger = this.main.getByTestId('select-raProfile-trigger');
-        this.keySourceTrigger = this.main.getByTestId('select-uploadCsr-trigger');
+        this.keySourceTrigger = this.main.getByTestId('keySource-trigger');
         this.csrTextarea = this.main.locator('#__fileUpload__fileContent');
         this.submitButton = this.main.getByTestId('progress-button');
 
@@ -65,6 +67,11 @@ export class CertificatePage {
         logger.info('Navigating to Issue Certificate page');
         await this.addCertificateButton.click();
         await expect(this.page).toHaveURL(/\/certificates\/add/);
+    }
+
+    async selectRequestTypeIssue(): Promise<void> {
+        logger.info('Selecting Request Type: Issue now');
+        await this.requestTypeIssue.click();
     }
 
     async selectRaProfile(raProfileName: string): Promise<void> {
