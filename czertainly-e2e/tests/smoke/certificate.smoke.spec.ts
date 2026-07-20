@@ -69,6 +69,7 @@ test.describe('@smoke certificate', () => {
 
         await test.step('Issue certificate via UI', async () => {
             await certPage.openIssuePage();
+            await certPage.selectRequestTypeIssue();
             await certPage.selectRaProfile(state.raProfileName);
             await certPage.selectKeySourceExternal();
             await certPage.pasteCsr(csr);
