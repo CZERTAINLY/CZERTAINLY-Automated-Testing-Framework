@@ -16,6 +16,7 @@
     "node-forge": "^1.4.0"
   },
   "dependencies": {
+    "@kubernetes/client-node": "^1.4.0",
     "dotenv": "^17.2.3"
   }
 }
