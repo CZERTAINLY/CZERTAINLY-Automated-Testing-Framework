@@ -25,12 +25,54 @@ import { Logger } from '../../utils/Logger';
 const logger = new Logger('AcmeSmokeTest');
 
 test.describe('@smoke acme', () => {
-    test('SMK-005: reconnaissance — what is available in the cluster', async () => {
-        await test.step('List all namespaces', async () => {
-            const coreApi = getCoreApi();
-            const nsList = await coreApi.listNamespace();
-            const names = nsList.items.map(ns => ns.metadata?.name);
-            logger.info(`Found ${names.length} namespaces: ${names.join(', ')}`);
+    test('SMK-005: reconnaissance — what is available in the cluster', async ({ env }) => {
+        await test.step('Check permissions via SelfSubjectAccessReview', async () => {
+            const authApi = getAuthorizationApi();
+
+            const canI = async (
+                verb: string,
+                resource: string,
+                group: string,
+                namespace?: string,
+            ): Promise<boolean> => {
+                const review = await authApi.createSelfSubjectAccessReview({
+                    body: {
+                        spec: {
+                            resourceAttributes: { verb, resource, group, namespace },
+                        },
+                    },
+                });
+                return review.status?.allowed === true;
+            };
+
+            const smokeNs = env.smoke.namespace!;  // guaranteed present by strict env validation
+
+            const checks: Array<{ verb: string; resource: string; group: string; namespace?: string }> = [
+                // Cluster-scope — what we can do at the cluster level
+                { verb: 'list', resource: 'namespaces', group: '' },
+                { verb: 'create', resource: 'clusterissuers', group: 'cert-manager.io' },
+                { verb: 'list', resource: 'clusterissuers', group: 'cert-manager.io' },
+                { verb: 'list', resource: 'ingressclasses', group: 'networking.k8s.io' },
+                { verb: 'list', resource: 'customresourcedefinitions', group: 'apiextensions.k8s.io' },
+
+                // Namespaced in our smoke namespace — what we can read/write at our place
+                { verb: 'create', resource: 'issuers', group: 'cert-manager.io', namespace: smokeNs },
+                { verb: 'create', resource: 'certificates', group: 'cert-manager.io', namespace: smokeNs },
+                { verb: 'create', resource: 'secrets', group: '', namespace: smokeNs },
+                { verb: 'get', resource: 'secrets', group: '', namespace: smokeNs },
+                { verb: 'create', resource: 'ingresses', group: 'networking.k8s.io', namespace: smokeNs },
+
+                // Namespaced в cert-manager — can we read at least what's installed there
+                { verb: 'list', resource: 'pods', group: '', namespace: 'cert-manager' },
+            ];
+
+            for (const check of checks) {
+                const allowed = await canI(check.verb, check.resource, check.group, check.namespace);
+                const scope = check.namespace ? `ns:${check.namespace}` : 'cluster-scope';
+                const groupLabel = check.group || 'core';
+                const verdict = allowed ? 'ALLOWED' : 'DENIED';
+                logger.info(`${verdict} — ${check.verb} ${check.resource} (${groupLabel}) [${scope}]`);
+            }
         });
 
     });
