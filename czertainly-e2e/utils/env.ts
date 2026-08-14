@@ -30,6 +30,7 @@ export type TestEnv = {
   authBaseUrl?: string;
   localAuthProviderName: string;
   smokePersist: boolean;  // SMOKE_PERSIST=true → reuse state between runs, skip teardown
+  kubeconfigPath?: string;  // KUBECONFIG_PATH — for local k8s access; ignored in-cluster (uses ServiceAccount token)
   smoke: SmokeEnv;
 };
 
@@ -50,6 +51,9 @@ export type SmokeEnv = {
   ejbcaCaName?: string;
   ejbcaEndEntityProfile?: string;
   ejbcaCertificateProfile?: string;
+
+  // SMK-005 - Issue Certificate through ACME
+  namespace?: string;  // SMOKE_TESTS_NAMESPACE — where the test creates Issuer / Certificate / Secret
 };
 
 function required(name: string): string {
@@ -77,6 +81,7 @@ export function loadEnv(): TestEnv {
     authBaseUrl: process.env.AUTH_BASE_URL, // Defaults to baseUrl/kc if not set
     localAuthProviderName: required('LOCAL_AUTH_PROVIDER_NAME'),
     smokePersist: process.env.SMOKE_PERSIST === 'true',
+    kubeconfigPath: process.env.KUBECONFIG_PATH,
     smoke: {
       discoveryProviderName: process.env.DISCOVERY_PROVIDER_NAME,
       discoveryProviderUrl: process.env.DISCOVERY_PROVIDER_URL,
@@ -92,6 +97,8 @@ export function loadEnv(): TestEnv {
       ejbcaCaName: process.env.EJBCA_CA_NAME,
       ejbcaEndEntityProfile: process.env.EJBCA_END_ENTITY_PROFILE,
       ejbcaCertificateProfile: process.env.EJBCA_CERTIFICATE_PROFILE,
+
+      namespace: process.env.SMOKE_TESTS_NAMESPACE,
     },
   };
 
