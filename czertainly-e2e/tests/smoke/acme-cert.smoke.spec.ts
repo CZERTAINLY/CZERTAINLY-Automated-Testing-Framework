@@ -24,8 +24,10 @@ import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('AcmeSmokeTest');
 
+// TODO: enable when Testkube ServiceAccount has RBAC to create Issuer/Certificate 
+// in `testkube-runner` namespace.
 test.describe('@smoke acme', () => {
-    test('SMK-005: reconnaissance — what is available in the cluster', async ({ env }) => {
+    test.skip('SMK-005: reconnaissance — what is available in the cluster', async ({ env }) => {
         await test.step('Check permissions via SelfSubjectAccessReview', async () => {
             const authApi = getAuthorizationApi();
 
