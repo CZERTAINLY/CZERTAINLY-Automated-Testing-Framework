@@ -26,6 +26,17 @@ export class CertificatePage {
     readonly main: Locator;
     readonly addCertificateButton: Locator;
 
+    // Upload Certificate
+    readonly uploadButton: Locator;
+    readonly uploadModal: Locator;
+    readonly uploadFileContentTextarea: Locator;
+    readonly uploadSubmitButton: Locator;
+
+    // Delete certificate from Details page
+    readonly deleteButton: Locator;
+    readonly deleteConfirmDialog: Locator;
+    readonly deleteConfirmButton: Locator;
+
     // Issue page (separate URL: /certificates/add, not a modal)
     readonly requestTypeIssue: Locator;
     readonly raProfileTrigger: Locator;
@@ -33,7 +44,7 @@ export class CertificatePage {
     readonly csrTextarea: Locator;
     readonly submitButton: Locator;
 
-    // Detail page
+    // Details page
     readonly tablist: Locator;
 
     constructor(page: Page) {
@@ -42,6 +53,16 @@ export class CertificatePage {
 
         this.main = page.locator('main');
         this.addCertificateButton = this.main.getByTestId('add-certificate-button');
+
+        this.uploadButton = this.main.getByTestId('upload-button');
+        this.uploadModal = page.getByRole('dialog').filter({ hasText: 'Upload Certificate' });
+        this.uploadFileContentTextarea = this.uploadModal.locator('#__fileUpload__fileContent');
+        this.uploadSubmitButton = this.uploadModal.getByTestId('progress-button');
+
+        this.deleteButton = this.main.getByTestId('trash-button');
+        this.deleteConfirmDialog = page.getByRole('dialog').filter({ hasText: 'Delete Certificate' });
+        this.deleteConfirmButton = this.deleteConfirmDialog.getByRole('button', { name: 'Delete', exact: true });
+
 
         this.requestTypeIssue = this.main.getByTestId('requestType-issue');
         this.raProfileTrigger = this.main.getByTestId('select-raProfile-trigger');
@@ -67,6 +88,31 @@ export class CertificatePage {
         logger.info('Navigating to Issue Certificate page');
         await this.addCertificateButton.click();
         await expect(this.page).toHaveURL(/\/certificates\/add/);
+    }
+
+    async openUploadModal(): Promise<void> {
+        logger.info('Opening Upload Certificate modal');
+        await this.uploadButton.click();
+        await expect(this.uploadModal).toBeVisible();
+    }
+
+    async pasteCertificatePem(pem: string): Promise<void> {
+        logger.info('Pasting certificate PEM into textarea');
+        await this.uploadFileContentTextarea.fill(pem);
+    }
+
+    async submitUpload(): Promise<void> {
+        logger.info('Submitting upload');
+        await this.uploadSubmitButton.click();
+        await expect(this.uploadModal).not.toBeVisible();
+    }
+
+    async deleteFromDetail(): Promise<void> {
+        logger.info('Deleting certificate from details page');
+        await this.deleteButton.click();
+        await expect(this.deleteConfirmDialog).toBeVisible();
+        await this.deleteConfirmButton.click();
+        await expect(this.deleteConfirmDialog).not.toBeVisible();
     }
 
     async selectRequestTypeIssue(): Promise<void> {
