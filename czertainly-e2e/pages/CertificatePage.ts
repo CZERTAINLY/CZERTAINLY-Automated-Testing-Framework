@@ -47,6 +47,11 @@ export class CertificatePage {
     // Details page
     readonly tablist: Locator;
 
+    // Attributes tab
+    readonly customAttributeSelectTrigger: Locator;
+    readonly saveCustomValueButton: Locator;
+
+
     constructor(page: Page) {
         this.page = page;
         this.navigation = new Navigation(page);
@@ -71,6 +76,10 @@ export class CertificatePage {
         this.submitButton = this.main.getByTestId('progress-button');
 
         this.tablist = page.getByRole('tablist');
+
+        this.customAttributeSelectTrigger = this.main.getByTestId('select-selectCustomAttribute-trigger');
+        this.saveCustomValueButton = this.main.getByTestId('save-custom-value');
+
     }
 
     async goToList(): Promise<void> {
@@ -221,5 +230,25 @@ export class CertificatePage {
             await expect(this.main).not.toContainText(/internal server error/i);
             await expect(this.main).not.toContainText(/unexpected error/i);
         }
+    }
+
+    async assignCustomAttributeValue(attributeName: string, value: string): Promise<void> {
+        logger.info(`Assigning custom attribute "${attributeName}" with value "${value}"`);
+        await this.customAttributeSelectTrigger.click();
+        await this.page.getByRole('option', { name: attributeName, exact: true }).click();
+        const valueInput = this.main.getByTestId(`text-input-${attributeName}`);
+        await valueInput.click();
+        await valueInput.fill(value);
+        await this.saveCustomValueButton.click();
+        // Wait for the row to appear in the Custom Attributes table
+        const row = this.main.locator('tr').filter({ hasText: attributeName });
+        await expect(row).toBeVisible();
+    }
+
+    async unassignCustomAttributeValue(attributeName: string): Promise<void> {
+        logger.info(`Unassigning custom attribute value: ${attributeName}`);
+        const row = this.main.locator('tr').filter({ hasText: attributeName });
+        await row.getByTestId('delete-button').click();
+        await expect(row).not.toBeVisible();
     }
 }
